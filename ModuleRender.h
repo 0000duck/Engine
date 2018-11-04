@@ -28,9 +28,15 @@ private:
                              unsigned program, const math::float4x4& model, 
                              const math::float4x4& view, const math::float4x4& proj);
 
+    void          GenerateFBOTexture(unsigned w, unsigned h);
 public:
 
-	void*   context = nullptr;
-    Camera* camera = nullptr;
-    
+	void*        context    = nullptr;
+    Camera*      camera     = nullptr;
+    unsigned     fbo        = 0;
+    unsigned     fb_depth   = 0;
+    unsigned     fb_tex     = 0;
+    unsigned     fb_width   = 0;
+    unsigned     fb_height  = 0;
+
 };

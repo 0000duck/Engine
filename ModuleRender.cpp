@@ -42,11 +42,11 @@ bool ModuleRender::Init()
 	glEnable(GL_TEXTURE_2D);
 
 	glClearDepth(1.0f);
-	glClearColor(0.3f, 0.3f, 0.3f, 1.f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.f);
 
     int width, height;
     SDL_GetWindowSize(App->window->window, &width, &height);
-    glViewport(0, 0, width, height);
+    GenerateFBOTexture(width, height);
 
     camera = new Camera;
     camera->LookAt(math::float3(0.0f, 5.0f, 10.0f), math::float3(0.0f, 5.0f, 0.0f), math::float3::unitY);
@@ -60,6 +60,7 @@ update_status ModuleRender::PreUpdate()
     int width, height;
     SDL_GetWindowSize(App->window->window, &width, &height);
     glViewport(0, 0, width, height);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     return UPDATE_CONTINUE;
@@ -68,6 +69,12 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glViewport(0, 0, fb_width, fb_height);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
     math::float4x4 proj = camera->GetProjMatrix();
     math::float4x4 view = camera->GetViewMatrix();
 
@@ -78,6 +85,8 @@ update_status ModuleRender::Update()
         RenderMesh(mesh, App->models->materials[mesh.material], App->programs->def_program, 
 				  App->models->transform, view, proj);
     }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return UPDATE_CONTINUE;
 }
@@ -108,7 +117,7 @@ void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleM
 update_status ModuleRender::PostUpdate()
 {
 	SDL_GL_SwapWindow(App->window->window);
-
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -127,6 +136,53 @@ bool ModuleRender::CleanUp()
 
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
-    glViewport(0, 0, width, height); 
+    GenerateFBOTexture(width, height);
+    camera->SetPerspective(math::pi*0.25f, float(width)/float(height), 0.1f, 150.0f);
+}
+
+void ModuleRender::GenerateFBOTexture(unsigned w, unsigned h)
+{
+    if(w != fb_width || h != fb_height)
+    {
+        if(fb_tex != 0)
+        {
+            glDeleteTextures(1, &fb_tex);
+        }
+
+        if(w != 0 && h != 0)
+        {
+            if(fbo == 0)
+            {
+                glGenFramebuffers(1, &fbo);
+            }
+
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glGenTextures(1, &fb_tex);
+            glBindTexture(GL_TEXTURE_2D, fb_tex);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            
+            glGenRenderbuffers(1, &fb_depth);
+            glBindRenderbuffer(GL_RENDERBUFFER, fb_depth);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, w, h);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fb_depth);            
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_tex, 0);
+
+            glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+
+		fb_width = w;
+		fb_height = h;
+    }
 }
 

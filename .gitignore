@@ -12,3 +12,7 @@ Debug/Engine.exe
 .vs/Engine/v15/.suo
 *.enc
 *.pdb
+*.pdb
+*.idb
+Debug/ModuleWindow.obj
+*.obj

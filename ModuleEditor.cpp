@@ -42,30 +42,59 @@ bool ModuleEditor::Init()
 
 update_status ModuleEditor::PreUpdate()
 {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(App->window->window);
-    ImGui::NewFrame();
-
-    camera_ctrl->Update(App->render->camera);
-
-    // \todo imgui calls
-
-    ImGui::Render();
-    SDL_GL_MakeCurrent(App->window->window, App->render->context);
 
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::Update()
 {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(App->window->window);
+    ImGui::NewFrame();
+
+    ImGui::SetNextWindowPos(ImVec2(340.0f, 50.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(980.0f, 560.0f), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Scene"))
+	{
+        if(ImGui::BeginChild("SceneCanvas", ImVec2(0, 0), true, ImGuiWindowFlags_NoMove))
+        {
+            if(ImGui::IsWindowHovered())
+            {
+                camera_ctrl->Update(App->render->camera);
+            }
+            else
+            {
+                camera_ctrl->UpdateCamera(App->render->camera);
+            }
+
+            float width = ImGui::GetWindowContentRegionWidth();
+            float height = ImGui::GetContentRegionAvail().y;
+
+            App->render->WindowResized((unsigned)width, (unsigned)height);
+
+            ImGui::GetWindowDrawList()->AddImage(
+                    (void*)App->render->fb_tex,
+                    ImVec2(ImGui::GetCursorScreenPos()),
+                    ImVec2(ImGui::GetCursorScreenPos().x + App->render->fb_width,
+                        ImGui::GetCursorScreenPos().y + App->render->fb_height), ImVec2(0, 1), ImVec2(1, 0));
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+        }
+        ImGui::EndChild();
+    }
+	ImGui::End();
+
+    ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	SDL_GL_MakeCurrent(App->window->window, App->render->context);
 
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::PostUpdate()
 {
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	
 	return UPDATE_CONTINUE;
 }
 
