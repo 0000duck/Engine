@@ -52,8 +52,8 @@ update_status ModuleEditor::Update()
     ImGui_ImplSDL2_NewFrame(App->window->window);
     ImGui::NewFrame();
 
-    ImGui::SetNextWindowPos(ImVec2(340.0f, 50.0f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(980.0f, 560.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(64.0f, 16.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(640.0f, 420.0f), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Scene"))
 	{

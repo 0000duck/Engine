@@ -3,6 +3,7 @@
 #include "Camera.h"
 
 #include "imgui.h"
+#include "sdl.h"
 
 #define ROTATION_SPEED 0.025f
 #define TRANSLATION_SPEED 0.03f

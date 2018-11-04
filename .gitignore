@@ -16,3 +16,5 @@ Debug/Engine.exe
 *.idb
 Debug/ModuleWindow.obj
 *.obj
+*.un~
+*.tlog

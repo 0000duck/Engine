@@ -4,6 +4,8 @@
 #include "Globals.h"
 
 #include "SDL/include/SDL.h"
+#include "imgui.h"
+#include "imgui_impl_sdl.h"
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 
@@ -92,6 +94,8 @@ int main(int argc, char ** argv)
 				state = MAIN_FINISH;
 				break;
 			}
+
+			ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 		}
 	}
 
