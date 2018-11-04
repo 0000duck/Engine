@@ -75,6 +75,9 @@ bool ModuleModelLoader::CleanUp()
 
 void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 {
+    math::float3 min_v(FLT_MAX, FLT_MAX, FLT_MAX);
+    math::float3 max_v(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
     for(unsigned i=0; i< scene->mNumMeshes; ++i)
     {
         const aiMesh* src_mesh = scene->mMeshes[i];
@@ -85,6 +88,15 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
         glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
 
         // Positions
+
+        for(unsigned i=0; i< src_mesh->mNumVertices; ++i)
+        {
+            for(unsigned j=0; j<3; ++j)
+            {
+                min_v[j] = min(min_v[j], src_mesh->mVertices[i][j]);
+                max_v[j] = max(max_v[j], src_mesh->mVertices[i][j]);
+            }
+        }
 
         glBufferData(GL_ARRAY_BUFFER, (sizeof(float)*3+sizeof(float)*2)*src_mesh->mNumVertices, nullptr, GL_STATIC_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float)*3*src_mesh->mNumVertices, src_mesh->mVertices);
@@ -149,6 +161,9 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 
         meshes.push_back(dst_mesh);
     }
+
+    bsphere.center = (max_v+min_v)*0.5f;
+    bsphere.radius = (max_v-min_v).Length()*0.5f;
 }
 
 void ModuleModelLoader::GenerateMaterials(const aiScene* scene)

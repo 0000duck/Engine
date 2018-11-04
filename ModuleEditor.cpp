@@ -34,7 +34,8 @@ bool ModuleEditor::Init()
     //ImGui::StyleColorsClassic();
 
     camera_ctrl = new ArcBall;
-    camera_ctrl->SetRadius(10.0f);
+    camera_ctrl->SetPanning(App->models->bsphere.center);
+    camera_ctrl->SetRadius(App->models->bsphere.radius*2.0f);
 
     return true;
 }
@@ -44,6 +45,8 @@ update_status ModuleEditor::PreUpdate()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(App->window->window);
     ImGui::NewFrame();
+
+    camera_ctrl->Update(App->render->camera);
 
     // \todo imgui calls
 
@@ -55,7 +58,6 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update()
 {
-    camera_ctrl->Update(App->render->camera);
 
 	return UPDATE_CONTINUE;
 }

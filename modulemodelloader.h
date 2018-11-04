@@ -24,6 +24,7 @@ private:
 
     void            GenerateMeshes(const aiScene* scene);
     void            GenerateMaterials(const aiScene* scene);
+    void            ComputeBoundSphere(math::float3& center, float radius);
 
 public:
 
@@ -42,9 +43,16 @@ public:
         unsigned texture0 = 0;
     };
 
+    struct Sphere
+    {
+        math::float3 center = math::float3::zero;
+        float        radius = 0.0f;
+    };
+
     std::vector<Mesh>     meshes;
     std::vector<Material> materials;
     math::float4x4        transform = math::float4x4::identity;
+    Sphere                bsphere;
 };
 
 #endif // __ModuleModelLoader_h__ 

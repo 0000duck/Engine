@@ -23,14 +23,39 @@ public:
 	ArcBall();
 	~ArcBall();
 
-	void Update         (Camera* camera = nullptr);
+	void                Update         (Camera* camera = nullptr);
 
-	void SetRadius      (float radius);
-	void SetPolar       (float polar);
-	void SetAzimuthal   (float azimuthal);
-    void SetPanning     (const math::float3& panning);
+	void                SetRadius      (float radius);
+	void                SetPolar       (float polar);
+	void                SetAzimuthal   (float azimuthal);
+    void                SetPanning     (const math::float3& panning);
 
-	void UpdateCamera   (Camera* camera);
+	float               GetRadius      () const;
+	float               GetPolar       () const;
+	float               GetAzimuthal   () const;
+    const math::float3& GetPanning     () const;
+
+	void                UpdateCamera   (Camera* camera);
 };
+
+inline float ArcBall::GetRadius() const
+{
+    return params.radius;
+}
+
+inline float ArcBall::GetPolar() const
+{
+    return params.polar;
+}
+
+inline float ArcBall::GetAzimuthal() const
+{
+    return params.azimuthal;
+}
+
+inline const math::float3& ArcBall::GetPanning() const
+{
+    return params.panning;
+}
 
 #endif /* _ARCBALL_H_ */

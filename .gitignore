@@ -9,3 +9,6 @@
 Debug/Engine.exe
 *.ilk
 *.log
+.vs/Engine/v15/.suo
+*.enc
+*.pdb

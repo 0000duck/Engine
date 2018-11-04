@@ -23,7 +23,7 @@ void ArcBall::Update(Camera* camera)
         float sign_x = delta.x < 0.0f ? -1.0f : 1.0f;
         float sign_y = delta.y < 0.0f ? -1.0f : 1.0f;
 
-        if(ImGui::GetIO().KeyCtrl)
+        if(ImGui::GetIO().KeyCtrl) // note: must be inside imgui window
         {
             dragging.panning.x= -TRANSLATION_SPEED*delta.x;
             dragging.panning.y= TRANSLATION_SPEED*delta.y;
@@ -71,7 +71,7 @@ void ArcBall::UpdateCamera(Camera* camera)
 	assert(camera);
 
     math::Quat rotation_polar(math::float3(0.0f, 1.0f, 0.0f), dragging.polar+params.polar);
-    math::Quat rotation_azimuthal(rotation_polar.Transform(math::float3(1.0f, 0.0f, 0.0f)), dragging.azimuthal+params.azimuthal);
+    math::Quat rotation_azimuthal(math::float3(1.0f, 0.0f, 0.0f), dragging.azimuthal+params.azimuthal);
     math::Quat rotation = rotation_polar*rotation_azimuthal;
 	camera->SetPosition(rotation.Transform(dragging.panning+params.panning+math::float3(0.0f, 0.0f, dragging.radius+params.radius)));
 	camera->SetRotation(rotation);
