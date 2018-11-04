@@ -3,6 +3,7 @@
 
 #include "Module.h"
 
+class ArcBall;
 
 class ModuleEditor : public Module
 {
@@ -15,6 +16,9 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
+
+private:
+    ArcBall* camera_ctrl;
 };
 
 #endif // _MODULE_EDITOR_H_

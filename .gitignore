@@ -1,0 +1,11 @@
+
+*.un~
+*.un~
+*.db
+*.un~
+*.opendb
+*.ipch
+*.obj
+Debug/Engine.exe
+*.ilk
+*.log

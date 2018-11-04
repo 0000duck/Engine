@@ -103,10 +103,9 @@ math::float4x4 Camera::GetViewMatrix() const
 
 void Camera::SetPerspective(float fovY, float aspect, float _near, float _far)
 {
-	const float pi = 3.1415926535897932384626433832795f;
 	float fW, fH;
 
-	fH = tan(fovY / 360 * pi) * _near;
+	fH = tan(fovY*0.5f) * _near;
 	fW = fH * aspect;
 
 	SetFrustum(-fW, fW, -fH, fH, _near, _far);

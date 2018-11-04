@@ -12,7 +12,7 @@ class ArcBall
 		float 	     radius = 0.0f;
 		float 	     polar = 0.0f;
 		float        azimuthal = 0.0f;
-        math::float3 panning;
+        math::float3 panning = math::float3::zero;
 	};
 
 	Params     params;
@@ -23,9 +23,7 @@ public:
 	ArcBall();
 	~ArcBall();
 
-	static ArcBall* GetService();
-
-	void Update         (unsigned elapsed, Camera* camera = nullptr);
+	void Update         (Camera* camera = nullptr);
 
 	void SetRadius      (float radius);
 	void SetPolar       (float polar);

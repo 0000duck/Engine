@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleModelLoader.h"
 #include "ModulePrograms.h"
+#include "Camera.h"
 
 #include "SDL.h"
 #include "GL/glew.h"
@@ -47,25 +48,9 @@ bool ModuleRender::Init()
     SDL_GetWindowSize(App->window->window, &width, &height);
     glViewport(0, 0, width, height);
 
-	frustum.type = FrustumType::PerspectiveFrustum;
-
-	frustum.pos   = float3::zero;
-	frustum.front = -float3::unitZ;
-	frustum.up    = float3::unitY;
-
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance  = 150.0f;
-	frustum.verticalFov		  = math::pi/4.0f;
-	frustum.horizontalFov     = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * float(width)/float(height));
-
-	math::float3 eye    = math::float3(-10.0f, 1.0f, -10.0f);
-	math::float3 target = math::float3(0.0f, 1.0f, 0.0f);
-
-    math::float3x3 lookat = math::float3x3::LookAt(math::float3::unitZ, (target-eye).Normalized(), math::float3::unitY, math::float3::unitY);
-
-	frustum.front = lookat*math::float3::unitZ;
-	frustum.up = lookat*math::float3::unitY;
-	frustum.pos = eye;
+    camera = new Camera;
+    camera->LookAt(math::float3(0.0f, 5.0f, 10.0f), math::float3(0.0f, 5.0f, 0.0f), math::float3::unitY);
+    camera->SetPerspective(math::pi*0.25f, float(width)/float(height), 0.1f, 150.0f);
 
 	return true;
 }
@@ -77,17 +62,14 @@ update_status ModuleRender::PreUpdate()
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // \todo our gl 
-
-
     return UPDATE_CONTINUE;
 }
 
 // Called every draw update
 update_status ModuleRender::Update()
 {
-    math::float4x4 proj = frustum.ProjectionMatrix();
-    math::float4x4 view = frustum.ViewMatrix();
+    math::float4x4 proj = camera->GetProjMatrix();
+    math::float4x4 view = camera->GetViewMatrix();
 
     for(unsigned i=0; i< App->models->meshes.size(); ++i)
     {
@@ -134,6 +116,9 @@ update_status ModuleRender::PostUpdate()
 bool ModuleRender::CleanUp()
 {
 	LOG("Destroying renderer");
+
+    delete camera;
+    camera = nullptr;
 
     SDL_GL_DeleteContext(context);
 

@@ -15,7 +15,7 @@ ArcBall::~ArcBall()
 {
 }
 
-void ArcBall::Update(unsigned elapsed, Camera* camera)
+void ArcBall::Update(Camera* camera)
 {
     if(ImGui::IsMouseDragging(0))
     {
@@ -30,8 +30,8 @@ void ArcBall::Update(unsigned elapsed, Camera* camera)
         }
         else
         {
-            dragging.polar= -sign_x*3.14159f*(ROTATION_SPEED*delta.x*ROTATION_SPEED*delta.x)/180.0f;
-            dragging.azimuthal= sign_y*3.14159f*(ROTATION_SPEED*delta.y*ROTATION_SPEED*delta.y)/180.0f;
+            dragging.polar= -sign_x*math::pi*(ROTATION_SPEED*delta.x*ROTATION_SPEED*delta.x)/180.0f;
+            dragging.azimuthal= sign_y*math::pi*(ROTATION_SPEED*delta.y*ROTATION_SPEED*delta.y)/180.0f;
         }
     }
     else
@@ -70,10 +70,10 @@ void ArcBall::UpdateCamera(Camera* camera)
 {
 	assert(camera);
 
-    math::float4 rotation_polar = math::rotation_quat(math::float3(0.0f, 1.0f, 0.0f), dragging.polar+params.polar);
-    math::float4 rotation_azimuthal = math::rotation_quat(math::qrot(rotation_polar, math::float3(1.0f, 0.0f, 0.0f)), dragging.azimuthal+params.azimuthal);
-    math::float4 rotation = math::qmul(rotation_polar, rotation_azimuthal);
-	camera->SetPosition(math::qrot(rotation, dragging.panning+params.panning+math::float3(0.0f, 0.0f, dragging.radius+params.radius)));
+    math::Quat rotation_polar(math::float3(0.0f, 1.0f, 0.0f), dragging.polar+params.polar);
+    math::Quat rotation_azimuthal(rotation_polar.Transform(math::float3(1.0f, 0.0f, 0.0f)), dragging.azimuthal+params.azimuthal);
+    math::Quat rotation = rotation_polar*rotation_azimuthal;
+	camera->SetPosition(rotation.Transform(dragging.panning+params.panning+math::float3(0.0f, 0.0f, dragging.radius+params.radius)));
 	camera->SetRotation(rotation);
 }
 

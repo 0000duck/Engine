@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ArcBall.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 #include "imgui.h"
@@ -32,6 +33,9 @@ bool ModuleEditor::Init()
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsClassic();
 
+    camera_ctrl = new ArcBall;
+    camera_ctrl->SetRadius(10.0f);
+
     return true;
 }
 
@@ -51,6 +55,8 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update()
 {
+    camera_ctrl->Update(App->render->camera);
+
 	return UPDATE_CONTINUE;
 }
 

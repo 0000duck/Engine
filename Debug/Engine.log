@@ -1,6 +1,2 @@
-﻿  Application.cpp
-  Main.cpp
-  ModuleEditor.cpp
-  ModuleRender.cpp
-  Generando código...
+﻿  ModuleRender.cpp
   Engine.vcxproj -> D:\Engine\Debug\Engine.exe
