@@ -1,20 +1,13 @@
 
 *.un~
-*.un~
 *.db
 *.un~
 *.opendb
 *.ipch
 *.obj
-Debug/Engine.exe
 *.ilk
 *.log
-.vs/Engine/v15/.suo
 *.enc
 *.pdb
-*.pdb
 *.idb
-Debug/ModuleWindow.obj
-*.obj
-*.un~
 *.tlog
