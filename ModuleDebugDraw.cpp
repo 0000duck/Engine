@@ -28,7 +28,7 @@ public:
         glUseProgram(linePointProgram);
 
         glUniformMatrix4fv(linePointProgram_MvpMatrixLocation,
-                           1, GL_FALSE, reinterpret_cast<float*>(&mvpMatrix));
+                           1, GL_TRUE, reinterpret_cast<float*>(&mvpMatrix));
 
         if (depthEnabled)
         {
@@ -61,7 +61,7 @@ public:
         glUseProgram(linePointProgram);
 
         glUniformMatrix4fv(linePointProgram_MvpMatrixLocation,
-                           1, GL_FALSE, reinterpret_cast<const float*>(&mvpMatrix));
+                           1, GL_TRUE, reinterpret_cast<const float*>(&mvpMatrix));
 
         if (depthEnabled)
         {

@@ -79,7 +79,7 @@ update_status ModuleRender::Update()
     math::float4x4 proj = camera->GetProjMatrix();
     math::float4x4 view = camera->GetViewMatrix();
 
-    dd::axisTriad(math::float4x4::identity, 0.1f,1.0f);
+    dd::axisTriad(math::float4x4::identity, App->models->bsphere.radius*0.15f, App->models->bsphere.radius*1.5f);
 
     for(unsigned i=0; i< App->models->meshes.size(); ++i)
     {
