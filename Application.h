@@ -12,6 +12,7 @@ class ModuleInput;
 class ModulePrograms;
 class ModuleRenderExercise;
 class ModuleModelLoader;
+class ModuleDebugDraw;
 
 class Application
 {

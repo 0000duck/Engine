@@ -13,14 +13,12 @@ public:
     ModuleDebugDraw();
     ~ModuleDebugDraw();
 
-	bool Init();
-	update_status Update();
-	bool CleanUp();
-
+	bool            Init();
+	update_status   Update();
+	bool            CleanUp();
 private:
 
     static DDRenderInterfaceCoreGL* implementation;
-	unsigned total_time;
 };
 
 #endif /* _MODULE_DEBUGDRAW_H_ */

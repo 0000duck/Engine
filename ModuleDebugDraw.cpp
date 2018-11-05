@@ -1,11 +1,13 @@
 #include "Globals.h"
 #include "ModuleDebugDraw.h"
+#include "Application.h"
+#include "ModuleRender.h"
 #include "Camera.h"
 
 #define DEBUG_DRAW_IMPLEMENTATION
 #include "DebugDraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
 
-#include <glad/glad.h>
+#include "GL/glew.h"
 #include <assert.h>
 
 class DDRenderInterfaceCoreGL final
@@ -179,7 +181,6 @@ public:
         , linePointVBO(0)
         , textVAO(0)
         , textVBO(0)
-        , ref_count(0)
     {
         //std::printf("\n");
         //std::printf("GL_VENDOR    : %s\n",   glGetString(GL_VENDOR));
@@ -447,7 +448,6 @@ public:
     // In this demo, it consists of the camera's view and projection matrices only.
     math::float4x4 mvpMatrix;
 	unsigned width, height;
-    unsigned ref_count;
 
 private:
 
@@ -542,52 +542,48 @@ const char * DDRenderInterfaceCoreGL::textFragShaderSrc = "\n"
     "    out_FragColor.a = texture(u_glyphTexture, v_TexCoords).r;\n"
     "}\n";
 
-DDRenderInterfaceCoreGL* DDRenderer::implementation = 0;
+DDRenderInterfaceCoreGL* ModuleDebugDraw::implementation = 0;
 
-ModuleDebugDraw::ModuleDebugDraw() : total_time(0)
+ModuleDebugDraw::ModuleDebugDraw() 
 {
-    if(!implementation)
-    {
-        implementation = new DDRenderInterfaceCoreGL;
-
-        dd::initialize(implementation);
-    }
-
-    ++implementation->ref_count;
 }
 
 ModuleDebugDraw::~ModuleDebugDraw()
 {
-    if(--implementation->ref_count == 0)
-    {
-        delete implementation;
-        implementation = 0,
-
-        dd::shutdown();
-    }
 }
 
-void ModuleDebugDraw::Draw(Camera* camera, unsigned fbo, unsigned elapsed)
+bool ModuleDebugDraw::Init()
 {
-    math::float4x4 view, proj;
-	view = camera->GetViewMatrix();
-    proj = camera->GetProjMatrix();
-    
-    implementation->mvpMatrix = math::mul(proj, view);
+    implementation = new DDRenderInterfaceCoreGL;
+    dd::initialize(implementation);
+    return true;
+}
 
-    // Send the camera matrix to the shaders:
 
-    // Drawing only really happens now (here's where RenderInterface gets called).
-	total_time += elapsed;
+bool ModuleDebugDraw::CleanUp()
+{
+    dd::shutdown();
 
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    dd::flush(total_time);
+    delete implementation;
+    implementation = 0;
+
+    return true;
+}
+
+update_status  ModuleDebugDraw::Update()
+{
+	math::float4x4 view  = App->render->camera->GetViewMatrix();
+	math::float4x4 proj = App->render->camera->GetProjMatrix();
+
+    implementation->width = App->render->fb_width;
+    implementation->height = App->render->fb_height;
+    implementation->mvpMatrix = proj * view;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, App->render->fbo);
+    dd::flush();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    return UPDATE_CONTINUE;
 }
 
-void ModuleDebugDraw::SetWindowSize(unsigned width, unsigned height)
-{
-	implementation->width = width;
-	implementation->height = height;
-}
 

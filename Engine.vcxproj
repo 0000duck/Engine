@@ -46,7 +46,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./imgui/examples;./imgui;./glew-2.1.0/include;./SDL/include;MathGeoLib/include;DevIL/include;assimp/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.Util;./imgui/examples;./imgui;./glew-2.1.0/include;./SDL/include;MathGeoLib/include;DevIL/include;assimp/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -66,7 +66,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./imgui/examples;./imgui;./glew-2.1.0/include;./SDL/include;MathGeoLib/include;DevIL/include;assimp/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.Util;./imgui/examples;./imgui;./glew-2.1.0/include;./SDL/include;MathGeoLib/include;DevIL/include;assimp/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -147,6 +147,7 @@
     <ClInclude Include="MathGeoLib\include\Math\TransformOps.h" />
     <ClInclude Include="MathGeoLib\include\Time\Clock.h" />
     <ClInclude Include="Module.h" />
+    <ClInclude Include="ModuleDebugDraw.h" />
     <ClInclude Include="ModuleEditor.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="modulemodelloader.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="MathGeoLib\include\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib\include\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
+    <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleModelLoader.cpp" />

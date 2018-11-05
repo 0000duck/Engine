@@ -8,6 +8,7 @@
 
 #include "ModuleModelLoader.h"
 #include "ModuleEditor.h"
+#include "ModuleDebugDraw.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ Application::Application()
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(render= new ModuleRender());
+	modules.push_back(new ModuleDebugDraw());
 	modules.push_back(textures = new ModuleTextures());
     modules.push_back(programs = new ModulePrograms());
 	modules.push_back(input = new ModuleInput());

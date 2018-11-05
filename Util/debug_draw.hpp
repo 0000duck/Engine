@@ -193,7 +193,7 @@
 #endif // DEBUG_DRAW_MAX_POINTS
 
 #ifndef DEBUG_DRAW_MAX_LINES
-    #define DEBUG_DRAW_MAX_LINES 3276800
+    #define DEBUG_DRAW_MAX_LINES 32768
 #endif // DEBUG_DRAW_MAX_LINES
 
 //
@@ -2114,28 +2114,25 @@ static inline void vecOrthogonalBasis(ddVec3_Out left, ddVec3_Out up, ddVec3_In 
 
 static inline void matTransformPointXYZ(ddVec3_Out result, ddVec3_In p, ddMat4x4_In m)
 {
-    const float* m_aux = reinterpret_cast<const float*>(&m);
-    result[X] = (m_aux[0] * p[X]) + (m_aux[4] * p[Y]) + (m_aux[8]  * p[Z]) + m_aux[12]; // p[W] assumed to be 1
-    result[Y] = (m_aux[1] * p[X]) + (m_aux[5] * p[Y]) + (m_aux[9]  * p[Z]) + m_aux[13];
-    result[Z] = (m_aux[2] * p[X]) + (m_aux[6] * p[Y]) + (m_aux[10] * p[Z]) + m_aux[14];
+    result[X] = (m[0][0] * p[X]) + (m[1][0] * p[Y]) + (m[2][0] * p[Z]) + m[3][0]; // p[W] assumed to be 1
+    result[Y] = (m[0][1] * p[X]) + (m[1][1] * p[Y]) + (m[2][1] * p[Z]) + m[3][1];
+    result[Z] = (m[0][2] * p[X]) + (m[1][2] * p[Y]) + (m[2][2] * p[Z]) + m[3][2];
 }
 
 static inline void matTransformPointXYZW(float result[4], ddVec3_In p, ddMat4x4_In m)
 {
-    const float* m_aux = reinterpret_cast<const float*>(&m);
-    result[X] = (m_aux[0] * p[X]) + (m_aux[4] * p[Y]) + (m_aux[8]  * p[Z]) + m_aux[12]; // p[W] assumed to be 1
-    result[Y] = (m_aux[1] * p[X]) + (m_aux[5] * p[Y]) + (m_aux[9]  * p[Z]) + m_aux[13];
-    result[Z] = (m_aux[2] * p[X]) + (m_aux[6] * p[Y]) + (m_aux[10] * p[Z]) + m_aux[14];
-    result[W] = (m_aux[3] * p[X]) + (m_aux[7] * p[Y]) + (m_aux[11] * p[Z]) + m_aux[15];
+    result[X] = (m[0][0] * p[X]) + (m[1][0] * p[Y]) + (m[2][0] * p[Z]) + m[3][0]; // p[W] assumed to be 1
+    result[Y] = (m[0][1] * p[X]) + (m[1][1] * p[Y]) + (m[2][1] * p[Z]) + m[3][1];
+    result[Z] = (m[0][2] * p[X]) + (m[1][2] * p[Y]) + (m[2][2] * p[Z]) + m[3][2];
+    result[W] = (m[0][3] * p[X]) + (m[1][3] * p[Y]) + (m[2][3] * p[Z]) + m[3][3];
 }
 
 static inline float matTransformPointXYZW2(ddVec3_Out result, const float p[3], ddMat4x4_In m)
 {
-    const float* m_aux = reinterpret_cast<const float*>(&m);
-    result[X] = (m_aux[0] * p[X]) + (m_aux[4] * p[Y]) + (m_aux[8]  * p[Z]) + m_aux[12]; // p[W] assumed to be 1
-    result[Y] = (m_aux[1] * p[X]) + (m_aux[5] * p[Y]) + (m_aux[9]  * p[Z]) + m_aux[13];
-    result[Z] = (m_aux[2] * p[X]) + (m_aux[6] * p[Y]) + (m_aux[10] * p[Z]) + m_aux[14];
-    float rw  = (m_aux[3] * p[X]) + (m_aux[7] * p[Y]) + (m_aux[11] * p[Z]) + m_aux[15];
+    result[X] = (m[0][0] * p[X]) + (m[1][0] * p[Y]) + (m[2][0] * p[Z]) + m[3][0]; // p[W] assumed to be 1
+    result[Y] = (m[0][1] * p[X]) + (m[1][1] * p[Y]) + (m[2][1] * p[Z]) + m[3][1];
+    result[Z] = (m[0][2] * p[X]) + (m[1][2] * p[Y]) + (m[2][2] * p[Z]) + m[3][2];
+    float rw  = (m[0][3] * p[X]) + (m[1][3] * p[Y]) + (m[2][3] * p[Z]) + m[3][3];
     return rw;
 }
 

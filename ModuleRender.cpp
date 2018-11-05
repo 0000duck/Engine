@@ -8,6 +8,7 @@
 
 #include "SDL.h"
 #include "GL/glew.h"
+#include "debugdraw.h"
 
 ModuleRender::ModuleRender()
 {
@@ -77,6 +78,8 @@ update_status ModuleRender::Update()
     
     math::float4x4 proj = camera->GetProjMatrix();
     math::float4x4 view = camera->GetViewMatrix();
+
+    dd::axisTriad(math::float4x4::identity, 0.1f,1.0f);
 
     for(unsigned i=0; i< App->models->meshes.size(); ++i)
     {
