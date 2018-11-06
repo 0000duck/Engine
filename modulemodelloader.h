@@ -28,8 +28,18 @@ private:
 
 public:
 
+	enum VertexAttribs
+	{
+		ATTRIB_TEX_COORDS_0 = 1 << 0,
+		ATTRIB_NORMALS      = 1 << 1,
+        ATTRIB_TANGENTS     = 1 << 2,
+		ATTRIB_BONES        = 1 << 3,
+	};
+
     struct Mesh
     {
+        unsigned attribs      = 0;
+        unsigned vertex_size  = 0;
         unsigned vao          = 0;
         unsigned vbo          = 0;
         unsigned ibo          = 0;

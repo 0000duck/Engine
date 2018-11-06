@@ -21,7 +21,7 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
-	const aiScene* scene = aiImportFile("BakerHouse.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
+	const aiScene* scene = aiImportFile("suzanne.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
 
     if(scene)
     {
@@ -98,16 +98,23 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
             }
         }
 
-        glBufferData(GL_ARRAY_BUFFER, (sizeof(float)*3+sizeof(float)*2)*src_mesh->mNumVertices, nullptr, GL_STATIC_DRAW);
+        dst_mesh.vertex_size |= src_mesh->HasTextureCoords(0) ? sizeof(float3)+sizeof(float2) : sizeof(float3);
+
+        glBufferData(GL_ARRAY_BUFFER, dst_mesh.vertex_size*src_mesh->mNumVertices, nullptr, GL_STATIC_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float)*3*src_mesh->mNumVertices, src_mesh->mVertices);
 
         // Texture coords
 
-        math::float2* texture_coords = (math::float2*)glMapBufferRange(GL_ARRAY_BUFFER, sizeof(float)*3*src_mesh->mNumVertices, 
-                                                                     sizeof(float)*2*src_mesh->mNumVertices, GL_MAP_WRITE_BIT);
-        for(unsigned i=0; i< src_mesh->mNumVertices; ++i)
+        if(src_mesh->HasTextureCoords(0))
         {
-            texture_coords[i] = math::float2(src_mesh->mTextureCoords[0][i].x, src_mesh->mTextureCoords[0][i].y);
+            dst_mesh.attribs |= ATTRIB_TEX_COORDS_0;
+
+            math::float2* texture_coords = (math::float2*)glMapBufferRange(GL_ARRAY_BUFFER, sizeof(float)*3*src_mesh->mNumVertices, 
+                    sizeof(float)*2*src_mesh->mNumVertices, GL_MAP_WRITE_BIT);
+            for(unsigned i=0; i< src_mesh->mNumVertices; ++i)
+            {
+                texture_coords[i] = math::float2(src_mesh->mTextureCoords[0][i].x, src_mesh->mTextureCoords[0][i].y);
+            }
         }
 
         glUnmapBuffer(GL_ARRAY_BUFFER);
