@@ -4,6 +4,8 @@
 #include "ModuleModelLoader.h"
 #include "ModuleTextures.h"
 
+#inlcude "par_shapes.h"
+
 #include "GL/glew.h"
 
 #include <assimp/scene.h>
@@ -21,7 +23,25 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
-	const aiScene* scene = aiImportFile("suzanne.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
+    return true;
+}
+
+update_status ModuleModelLoader::Update()
+{
+	return UPDATE_CONTINUE;
+}
+
+bool ModuleModelLoader::CleanUp()
+{
+    Clear();
+	return true;
+}
+
+bool ModuleModelLoader::Load(const char* file)
+{
+    Clear();
+
+	const aiScene* scene = aiImportFile(file, aiProcessPreset_TargetRealtime_MaxQuality);
 
     if(scene)
     {
@@ -38,39 +58,158 @@ bool ModuleModelLoader::Init()
     return false;
 }
 
-update_status ModuleModelLoader::Update()
+bool ModuleModelLoader::LoadSphere(unsigned slices, unsigned stacks)
 {
-	return UPDATE_CONTINUE;
+    Clear();
+
+    par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(int(slices), int(stacks));
+
+    GenerateMesh(mesh);
 }
 
-bool ModuleModelLoader::CleanUp()
+void ModuleModelLoader::GenerateMesh(par_shapes_mesh* shape)
 {
-	for (unsigned i = 0; i < meshes.size(); ++i)
-	{
+    Mesh dst_mesh;
+
+    glGenBuffers(1, &dst_mesh.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
+
+    // Positions
+
+    for(unsigned i=0; i< src_mesh->mNumVertices; ++i)
+    {
+        for(unsigned j=0; j<3; ++j)
+        {
+            min_v[j] = min(min_v[j], shape->points[i*3+j]);
+            max_v[j] = max(max_v[j], shape->points[i*3+j]);
+        }
+    }
+
+    unsigned offset_acc  = sizeof(math::float3);
+
+    if(shape->normals)
+    {
+        dst_mesh.normals_offset = offset_acc;
+        offset_acc += sizeof(math::float3);
+    }
+
+    if(shape->tcoords)
+    {
+        dst_mesh.texcoords_offset = offset_acc;
+        offset_acc += sizeof(math::float2);
+    }
+
+    dst_mesh.vertex_size = offset_acc;
+
+    glBufferData(GL_ARRAY_BUFFER, dst_mesh.vertex_size*shape->npoints, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(math::float3)*shape->npoints, shape->points);
+
+    // normals
+    
+    if(shape->normals)
+    {
+        glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.normals_offset*shape->npoints, sizeof(math::float3)*shape->npoints;, shape->normals);
+    }
+
+    // tcoords
+    
+    if(shape->tcoords)
+    {
+        glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.texcoords_offset*shape->npoints, sizeof(math::float2)*shape->npoints;, shape->tcoords);
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Indices
+
+    glGenBuffers(1, &dst_mesh.ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst_mesh.ibo);
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*shape->ntriangles*3, nullptr, GL_STATIC_DRAW);
+
+    unsigned* indices = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, 
+            sizeof(unsigned)*shape->ntriangles*3, GL_MAP_WRITE_BIT);
+
+    for(unsigned i=0; i< shape->ntriangles*3; ++i)
+    {
+        *(indices++) = src_mesh->triangles[i];
+    }
+
+    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    dst_mesh.material	  = 0;
+    dst_mesh.num_vertices = shape->npoints;
+    dst_mesh.num_indices  = shape->ntriangles*3;
+
+
+    GenerateVAO(dst_mesh);
+
+    meshes.push_back(dst_mesh);
+}
+
+void ModuleModelLoader::GenerateVAO(Mesh& mesh)
+{
+    glGenVertexArrays(1, &dst_mesh.vao);
+
+    glBindVertexArray(dst_mesh.vao);
+    glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst_mesh.ibo);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    if(dst_mesh.normals_offset != 0)
+    {
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    }
+
+    if(dst_mesh.texcoords_offset != 0)
+    {
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float)*3*dst_mesh.num_vertices));
+    }
+
+    glBindVertexArray(0);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void ModuleModelLoader::Clear()
+{
+    for (unsigned i = 0; i < meshes.size(); ++i)
+    {
         if(meshes[i].vao != 0)
         {
             glDeleteVertexArrays(1, &meshes[i].vao);
         }
 
-		if (meshes[i].vbo != 0)
-		{
-			glDeleteBuffers(1, &meshes[i].vbo);
-		}
+        if (meshes[i].vbo != 0)
+        {
+            glDeleteBuffers(1, &meshes[i].vbo);
+        }
 
-		if (meshes[i].ibo != 0)
-		{
-			glDeleteBuffers(1, &meshes[i].ibo);
-		}
-	}
+        if (meshes[i].ibo != 0)
+        {
+            glDeleteBuffers(1, &meshes[i].ibo);
+        }
+    }
 
-	for (unsigned i = 0; i < materials.size(); ++i)
-	{
-		if (materials[i].texture0 != 0)
-		{
-			App->textures->Unload(materials[i].texture0);
-		}
-	}
-	return true;
+    for (unsigned i = 0; i < materials.size(); ++i)
+    {
+        if (materials[i].texture0 != 0)
+        {
+            App->textures->Unload(materials[i].texture0);
+        }
+    }
+
+    meshes.clear();
+    materials.clear();
 }
 
 void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
@@ -115,9 +254,10 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
             {
                 texture_coords[i] = math::float2(src_mesh->mTextureCoords[0][i].x, src_mesh->mTextureCoords[0][i].y);
             }
+
+            glUnmapBuffer(GL_ARRAY_BUFFER);
         }
 
-        glUnmapBuffer(GL_ARRAY_BUFFER);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // Indices
@@ -155,7 +295,6 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float)*3*dst_mesh.num_vertices));
 
