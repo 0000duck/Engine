@@ -8,6 +8,7 @@
 #include <vector>
 
 struct aiScene;
+struct par_shapes_mesh_s;
 
 class ModuleModelLoader : public Module
 {
@@ -21,7 +22,7 @@ public:
 	bool            CleanUp     ();
 
     bool            Load        (const char* file);
-    bool            LoadSphere  (unsigned slices, unsigned stacks);
+    bool            LoadSphere  (float size, unsigned slices, unsigned stacks);
     void            Clear       ();
 
 public:
@@ -53,7 +54,7 @@ public:
 
 private:
 
-    void            GenerateMesh        (par_shapes_mesh* shape);
+    void            GenerateMesh        (par_shapes_mesh_s* shape);
     void            GenerateMeshes      (const aiScene* scene);
     void            GenerateVAO         (Mesh& mesh);
     void            GenerateMaterials   (const aiScene* scene);

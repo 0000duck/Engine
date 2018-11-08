@@ -4,7 +4,15 @@
 #include "ModuleModelLoader.h"
 #include "ModuleTextures.h"
 
-#inlcude "par_shapes.h"
+#pragma warning(push)
+#pragma warning(disable : 4996)  
+#pragma warning(disable : 4244)  
+#pragma warning(disable : 4305)  
+#pragma warning(disable : 4838)  
+
+#define PAR_SHAPES_IMPLEMENTATION
+#include "par_shapes.h"
+#pragma warning(pop)
 
 #include "GL/glew.h"
 
@@ -23,6 +31,8 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
+	LoadSphere(1.0f, 30, 30); // \todo: fails 45x45
+	//Load("BakerHouse.fbx");
     return true;
 }
 
@@ -53,22 +63,38 @@ bool ModuleModelLoader::Load(const char* file)
         return true;
     }
 
-	LOG("Error loading BakerHouse.fbx: %s", aiGetErrorString());
+	LOG("Error loading %s: %s", file, aiGetErrorString());
 
     return false;
 }
 
-bool ModuleModelLoader::LoadSphere(unsigned slices, unsigned stacks)
+bool ModuleModelLoader::LoadSphere(float size, unsigned slices, unsigned stacks)
 {
     Clear();
 
     par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(int(slices), int(stacks));
 
-    GenerateMesh(mesh);
+	if (mesh)
+	{
+        par_shapes_scale(mesh, size, size, size);
+
+		GenerateMesh(mesh);
+		par_shapes_free_mesh(mesh);
+
+        materials.push_back(Material());
+
+		return true;
+	}
+
+	return false;
 }
 
 void ModuleModelLoader::GenerateMesh(par_shapes_mesh* shape)
 {
+	math::float3 min_v(FLT_MAX, FLT_MAX, FLT_MAX);
+	math::float3 max_v(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+
     Mesh dst_mesh;
 
     glGenBuffers(1, &dst_mesh.vbo);
@@ -76,7 +102,7 @@ void ModuleModelLoader::GenerateMesh(par_shapes_mesh* shape)
 
     // Positions
 
-    for(unsigned i=0; i< src_mesh->mNumVertices; ++i)
+    for(unsigned i=0; i< unsigned(shape->npoints); ++i)
     {
         for(unsigned j=0; j<3; ++j)
         {
@@ -108,14 +134,14 @@ void ModuleModelLoader::GenerateMesh(par_shapes_mesh* shape)
     
     if(shape->normals)
     {
-        glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.normals_offset*shape->npoints, sizeof(math::float3)*shape->npoints;, shape->normals);
+        glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.normals_offset*shape->npoints, sizeof(math::float3)*shape->npoints, shape->normals);
     }
 
     // tcoords
     
     if(shape->tcoords)
     {
-        glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.texcoords_offset*shape->npoints, sizeof(math::float2)*shape->npoints;, shape->tcoords);
+        glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.texcoords_offset*shape->npoints, sizeof(math::float2)*shape->npoints, shape->tcoords);
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -130,9 +156,9 @@ void ModuleModelLoader::GenerateMesh(par_shapes_mesh* shape)
     unsigned* indices = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, 
             sizeof(unsigned)*shape->ntriangles*3, GL_MAP_WRITE_BIT);
 
-    for(unsigned i=0; i< shape->ntriangles*3; ++i)
+    for(unsigned i=0; i< unsigned(shape->ntriangles*3); ++i)
     {
-        *(indices++) = src_mesh->triangles[i];
+        *(indices++) = shape->triangles[i];
     }
 
     glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
@@ -146,29 +172,32 @@ void ModuleModelLoader::GenerateMesh(par_shapes_mesh* shape)
     GenerateVAO(dst_mesh);
 
     meshes.push_back(dst_mesh);
+
+    bsphere.center = (max_v+min_v)*0.5f;
+    bsphere.radius = (max_v-min_v).Length()*0.5f;
 }
 
 void ModuleModelLoader::GenerateVAO(Mesh& mesh)
 {
-    glGenVertexArrays(1, &dst_mesh.vao);
+    glGenVertexArrays(1, &mesh.vao);
 
-    glBindVertexArray(dst_mesh.vao);
-    glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst_mesh.ibo);
+    glBindVertexArray(mesh.vao);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    if(dst_mesh.normals_offset != 0)
+    if(mesh.normals_offset != 0)
     {
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(mesh.normals_offset*mesh.num_vertices));
     }
 
-    if(dst_mesh.texcoords_offset != 0)
+    if(mesh.texcoords_offset != 0)
     {
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float)*3*dst_mesh.num_vertices));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(mesh.texcoords_offset*mesh.num_vertices));
     }
 
     glBindVertexArray(0);
@@ -237,18 +266,38 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
             }
         }
 
-        dst_mesh.vertex_size |= src_mesh->HasTextureCoords(0) ? sizeof(float3)+sizeof(float2) : sizeof(float3);
+        unsigned offset_acc  = sizeof(math::float3);
+
+        if(src_mesh->HasNormals())
+        {
+            dst_mesh.normals_offset = offset_acc;
+            offset_acc += sizeof(math::float3);
+        }
+
+        if(src_mesh->HasTextureCoords(0))
+        {
+            dst_mesh.texcoords_offset = offset_acc;
+			offset_acc += sizeof(math::float2);
+        }
+
+        dst_mesh.vertex_size = offset_acc;
 
         glBufferData(GL_ARRAY_BUFFER, dst_mesh.vertex_size*src_mesh->mNumVertices, nullptr, GL_STATIC_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float)*3*src_mesh->mNumVertices, src_mesh->mVertices);
+
+        // Normals
+        
+        if(src_mesh->HasNormals())
+        {
+            glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.normals_offset*src_mesh->mNumVertices, sizeof(float)*3*src_mesh->mNumVertices, src_mesh->mNormals);
+        }
 
         // Texture coords
 
         if(src_mesh->HasTextureCoords(0))
         {
-            dst_mesh.attribs |= ATTRIB_TEX_COORDS_0;
 
-            math::float2* texture_coords = (math::float2*)glMapBufferRange(GL_ARRAY_BUFFER, sizeof(float)*3*src_mesh->mNumVertices, 
+            math::float2* texture_coords = (math::float2*)glMapBufferRange(GL_ARRAY_BUFFER, dst_mesh.texcoords_offset*src_mesh->mNumVertices, 
                     sizeof(float)*2*src_mesh->mNumVertices, GL_MAP_WRITE_BIT);
             for(unsigned i=0; i< src_mesh->mNumVertices; ++i)
             {
@@ -287,23 +336,8 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
         dst_mesh.num_indices  = src_mesh->mNumFaces*3;
 
         // generate vao
-        glGenVertexArrays(1, &dst_mesh.vao);
-
-        glBindVertexArray(dst_mesh.vao);
-        glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst_mesh.ibo);
-
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float)*3*dst_mesh.num_vertices));
-
-        glBindVertexArray(0);
-
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        
+        GenerateVAO(dst_mesh);
 
         meshes.push_back(dst_mesh);
     }
