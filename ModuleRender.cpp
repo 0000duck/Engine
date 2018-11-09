@@ -85,8 +85,7 @@ update_status ModuleRender::Update()
     {
         const ModuleModelLoader::Mesh& mesh = App->models->meshes[i];
 
-        RenderMesh(mesh, App->models->materials[mesh.material], App->programs->def_program, 
-				  App->models->transform, view, proj);
+        RenderMesh(mesh, App->models->materials[mesh.material], App->models->transform, view, proj);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -94,15 +93,20 @@ update_status ModuleRender::Update()
 	return UPDATE_CONTINUE;
 }
 
-void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material, 
-                              unsigned program, const math::float4x4& model, 
-                              const math::float4x4& view, const math::float4x4& proj)
+void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material,
+	const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj)
 {
-    glUseProgram(program);
+	unsigned program = App->programs->programs[material.program];
+	glUseProgram(program);
 
-    glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&model);
-    glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);
-    glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&proj);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&model);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&proj);
+
+	if (material.program == ModulePrograms::GOURAUD_PROGRAM)
+	{
+		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->models->light_pos);
+	}
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, material.texture0);
@@ -114,7 +118,6 @@ void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleM
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
-
 }
 
 update_status ModuleRender::PostUpdate()

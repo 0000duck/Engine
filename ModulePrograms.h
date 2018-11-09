@@ -13,11 +13,22 @@ public:
     bool CleanUp();
 
 private:
-    char* LoadFile(const char* file_name);
-    bool  Compile(unsigned id, char* data);
+
+    unsigned CreateProgram(const char* vshader, const char* fshader);
+    char*    LoadFile(const char* file_name);
+    bool     Compile(unsigned id, char* data);
 
 public:
-    unsigned def_program = 0;
+    enum Program
+    {
+        DEFAULT_PROGRAM = 0,
+        GOURAUD_PROGRAM,
+        PHONG_PROGRAM,
+        BLINN_PROGRAM,
+        PROGRAM_COUNT
+    };
+
+    unsigned programs[PROGRAM_COUNT];
 };
 
 #endif /* __ModulePrograms_h__ */

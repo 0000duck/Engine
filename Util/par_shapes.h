@@ -1767,7 +1767,9 @@ struct osn_context {
     int16_t* permGradIndex3D;
 };
 
+#ifndef ARRAYSIZE
 #define ARRAYSIZE(x) (sizeof((x)) / sizeof((x)[0]))
+#endif
 
 /*
  * Gradients for 2D. They approximate the directions to the

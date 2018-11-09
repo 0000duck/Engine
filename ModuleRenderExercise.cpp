@@ -75,15 +75,16 @@ bool ModuleRenderExercise::Init()
 
 update_status ModuleRenderExercise::Update()
 {
-    glUseProgram(App->programs->def_program);
+	unsigned program = App->programs->programs[ModulePrograms::DEFAULT_PROGRAM];
+    glUseProgram(program);
 
-    glUniformMatrix4fv(glGetUniformLocation(App->programs->def_program, "model"), 1, GL_TRUE, &tri_model[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(App->programs->def_program, "view"), 1, GL_TRUE, &view[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(App->programs->def_program, "proj"), 1, GL_TRUE, &proj[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &tri_model[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &proj[0][0]);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture0);
-	glUniform1i(glGetUniformLocation(App->programs->def_program, "texture0"), 0); // 0 is related to GL_TEXTURE0
+	glUniform1i(glGetUniformLocation(program, "texture0"), 0); // 0 is related to GL_TEXTURE0
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);

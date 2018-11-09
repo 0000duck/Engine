@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "ModuleModelLoader.h"
 #include "ModuleTextures.h"
+#include "ModulePrograms.h"
 
 #pragma warning(push)
 #pragma warning(disable : 4996)  
@@ -31,9 +32,11 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
-	LoadSphere(1.0f, 30, 30); // \todo: fails 45x45
+    light_pos = math::float3(2.0f, 2.0f, 2.0f);
+	bool ok = LoadSphere(1.0f, 30, 30); 
+    
 	//Load("BakerHouse.fbx");
-    return true;
+    return ok;
 }
 
 update_status ModuleModelLoader::Update()
@@ -81,7 +84,10 @@ bool ModuleModelLoader::LoadSphere(float size, unsigned slices, unsigned stacks)
 		GenerateMesh(mesh);
 		par_shapes_free_mesh(mesh);
 
-        materials.push_back(Material());
+        Material mat;
+        mat.program = ModulePrograms::GOURAUD_PROGRAM;
+
+        materials.push_back(mat);
 
 		return true;
 	}
@@ -362,6 +368,8 @@ void ModuleModelLoader::GenerateMaterials(const aiScene* scene)
 		{
             dst_material.texture0 = App->textures->Load(file.data, false);
         }
+
+        dst_material.program = unsigned(ModulePrograms::DEFAULT_PROGRAM);
 
         materials.push_back(dst_material);
 	}

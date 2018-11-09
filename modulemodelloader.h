@@ -42,6 +42,7 @@ public:
 
     struct Material
     {
+        unsigned program  = 0;
         unsigned texture0 = 0;
     };
 
@@ -50,7 +51,6 @@ public:
         math::float3 center = math::float3::zero;
         float        radius = 0.0f;
     };
-
 
 private:
 
@@ -66,6 +66,7 @@ public:
     std::vector<Material> materials;
     math::float4x4        transform = math::float4x4::identity;
     Sphere                bsphere;
+    math::float3          light_pos = math::float3::zero;
 };
 
 #endif // __ModuleModelLoader_h__ 

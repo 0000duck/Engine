@@ -25,8 +25,7 @@ public:
 private:
 
     void          RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material, 
-                             unsigned program, const math::float4x4& model, 
-                             const math::float4x4& view, const math::float4x4& proj);
+                             const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj);
 
     void          GenerateFBOTexture(unsigned w, unsigned h);
 public:

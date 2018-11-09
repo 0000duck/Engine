@@ -4,6 +4,10 @@
 
 ModulePrograms::ModulePrograms() 
 {
+    for(unsigned i=0; i< PROGRAM_COUNT; ++i)
+    {
+        programs[i] = 0;
+    }
 }
 
 ModulePrograms::~ModulePrograms()
@@ -12,34 +16,44 @@ ModulePrograms::~ModulePrograms()
 
 bool ModulePrograms::Init()
 {
+    programs[DEFAULT_PROGRAM] = CreateProgram("default.vs", "default.fs");
+    programs[GOURAUD_PROGRAM] = CreateProgram("gouraud.vs", "gouraud.fs");
+
+    return programs[DEFAULT_PROGRAM] != 0 && programs[GOURAUD_PROGRAM] != 0;
+}
+
+unsigned ModulePrograms::CreateProgram(const char* vshader, const char* fshader)
+{
+    unsigned program     = 0;
     unsigned vertex_id   = glCreateShader(GL_VERTEX_SHADER);
     unsigned fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
 
-    char* vertex_data = LoadFile("default.vs");
-    char* fragment_data = LoadFile("default.fs");
+    char* vertex_data   = LoadFile(vshader);
+    char* fragment_data = LoadFile(fshader);
 
-    bool ok = Compile(vertex_id, vertex_data) && Compile(fragment_id, fragment_data);
+	bool ok = Compile(vertex_id, vertex_data);
+	ok = ok && Compile(fragment_id, fragment_data);
 
     free(vertex_data);
     free(fragment_data);
 
     if(ok)
     {
-        def_program = glCreateProgram();
+        program = glCreateProgram();
 
-        glAttachShader(def_program, vertex_id);
-        glAttachShader(def_program, fragment_id);
+        glAttachShader(program, vertex_id);
+        glAttachShader(program, fragment_id);
 
-        glLinkProgram(def_program);
+        glLinkProgram(program);
 
         int len = 0;
-        glGetProgramiv(def_program, GL_INFO_LOG_LENGTH, &len);
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &len);
         if(len > 0)
         {
             int written = 0;
             char* info  = (char*)malloc(len);
 
-            glGetProgramInfoLog(def_program, len, &written, info);
+            glGetProgramInfoLog(program, len, &written, info);
 
             LOG("Program Log Info: %s", info);
 
@@ -51,14 +65,14 @@ bool ModulePrograms::Init()
     glDeleteShader(vertex_id);
     glDeleteShader(fragment_id);
 
-    return ok;
+    return program;
 }
 
 bool ModulePrograms::CleanUp()
 {
-	if (def_program != 0)
+	for(unsigned i=0; i< PROGRAM_COUNT; ++i)
 	{
-		glDeleteProgram(def_program);
+		glDeleteProgram(programs[i]);
 	}
 
 	return true;
