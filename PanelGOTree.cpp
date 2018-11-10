@@ -16,9 +16,8 @@ PanelGOTree::~PanelGOTree()
 
 void PanelGOTree::Draw()
 {
-    ImGui::SetNextWindowPos(ImVec2(0.0f, 16.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(256.0f, 420.0f), ImGuiCond_FirstUseEver);
-
 
     if(ImGui::Begin("GameObjects Hierarchy"))
     {

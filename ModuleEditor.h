@@ -3,8 +3,9 @@
 
 #include "Module.h"
 
-class ArcBall;
 class PanelGOTree;
+class PanelProperties;
+class Viewport;
 
 class ModuleEditor : public Module
 {
@@ -12,15 +13,17 @@ public:
     ModuleEditor();
     ~ModuleEditor();
 
-	bool Init();
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
-	bool CleanUp();
+	bool            Init        ();
+	update_status   PreUpdate   ();
+	update_status   Update      ();
+	update_status   PostUpdate  ();
+	bool            CleanUp     ();
 
-private:
-    ArcBall* camera_ctrl;
-    PanelGOTree* go_tree;
+public:
+
+    Viewport*        viewport    = nullptr;
+    PanelGOTree*     go_tree     = nullptr;
+    PanelProperties* properties  = nullptr;
 };
 
 #endif // _MODULE_EDITOR_H_

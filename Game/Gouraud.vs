@@ -27,7 +27,7 @@ void main()
     float diffuse    = max(0.0, dot(normal, light_dir));
     float specular   = 0.0;
 
-    if(diffuse > 0.0 && glossiness > 0.0)
+    if(diffuse > 0.0 && glossiness > 0.0 && shininess > 0.0)
     {
         vec3 view_pos    = transpose(mat3(view))*(-view[3].xyz);
         vec3 view_dir    = normalize(view_pos-position);
@@ -40,5 +40,5 @@ void main()
         }
     }
     
-	intensity = ambient+diffuse+specular;
+	intensity = (ambient+diffuse+specular)/(ambient+2.0);
 }

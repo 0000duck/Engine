@@ -37,7 +37,7 @@ bool ModuleModelLoader::Init()
     ambient   = 0.1f;
     light.pos = math::float3(2.0f, 2.0f, 2.0f);
 
-	bool ok   = LoadSphere("sphere0", 1.0f, 30, 30, math::float4(1.0f, 0.0f, 0.0f, 1.0f)); 
+	bool ok   = LoadSphere("sphere0", 1.0f, 40, 40, math::float4(1.0f, 0.0f, 0.0f, 1.0f)); 
     
     return ok;
 }

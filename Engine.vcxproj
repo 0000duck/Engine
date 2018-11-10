@@ -157,6 +157,8 @@
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="PanelGOTree.h" />
+    <ClInclude Include="PanelProperties.h" />
+    <ClInclude Include="Viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -211,6 +213,8 @@
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="PanelGOTree.cpp" />
+    <ClCompile Include="PanelProperties.cpp" />
+    <ClCompile Include="Viewport.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
