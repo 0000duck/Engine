@@ -94,7 +94,7 @@ update_status ModuleRender::Update()
 }
 
 void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material,
-	const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj)
+	                          const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj)
 {
 	unsigned program = App->programs->programs[material.program];
 	glUseProgram(program);
@@ -105,12 +105,22 @@ void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleM
 
 	if (material.program == ModulePrograms::GOURAUD_PROGRAM)
 	{
-		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->models->light_pos);
+		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->models->light.pos);
+		glUniform1f(glGetUniformLocation(program,  "ambient"), App->models->ambient);
+		glUniform1f(glGetUniformLocation(program, "shininess"), material.shininess);
+		glUniform1f(glGetUniformLocation(program, "glossiness"), material.glossiness);
 	}
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material.texture0);
-    glUniform1i(glGetUniformLocation(program, "texture0"), 0); 
+	if (material.diffuse_map == 0)
+	{
+		glUniform4fv(glGetUniformLocation(program, "diffuse_color"), 1, (const float*)&material.diffuse_color);
+	}
+	else
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, material.diffuse_map);
+		glUniform1i(glGetUniformLocation(program, "diffuse_map"), 0);
+	}
 
     glBindVertexArray(mesh.vao);
 	glDrawElements(GL_TRIANGLES, mesh.num_indices, GL_UNSIGNED_INT, nullptr);

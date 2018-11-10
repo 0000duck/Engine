@@ -32,10 +32,13 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
-    light_pos = math::float3(2.0f, 2.0f, 2.0f);
-	bool ok = LoadSphere(1.0f, 30, 30); 
+    // initial setup
+
+    ambient   = 0.1f;
+    light.pos = math::float3(2.0f, 2.0f, 2.0f);
+
+	bool ok   = LoadSphere("sphere0", 1.0f, 30, 30, math::float4(1.0f, 0.0f, 0.0f, 1.0f)); 
     
-	//Load("BakerHouse.fbx");
     return ok;
 }
 
@@ -71,7 +74,7 @@ bool ModuleModelLoader::Load(const char* file)
     return false;
 }
 
-bool ModuleModelLoader::LoadSphere(float size, unsigned slices, unsigned stacks)
+bool ModuleModelLoader::LoadSphere(const char* name, float size, unsigned slices, unsigned stacks, const math::float4& color)
 {
     Clear();
 
@@ -81,11 +84,12 @@ bool ModuleModelLoader::LoadSphere(float size, unsigned slices, unsigned stacks)
 	{
         par_shapes_scale(mesh, size, size, size);
 
-		GenerateMesh(mesh);
+		GenerateMesh(name, mesh);
 		par_shapes_free_mesh(mesh);
 
         Material mat;
-        mat.program = ModulePrograms::GOURAUD_PROGRAM;
+        mat.program		  = ModulePrograms::GOURAUD_PROGRAM;
+        mat.diffuse_color = color;
 
         materials.push_back(mat);
 
@@ -95,13 +99,15 @@ bool ModuleModelLoader::LoadSphere(float size, unsigned slices, unsigned stacks)
 	return false;
 }
 
-void ModuleModelLoader::GenerateMesh(par_shapes_mesh* shape)
+void ModuleModelLoader::GenerateMesh(const char* name, par_shapes_mesh* shape)
 {
 	math::float3 min_v(FLT_MAX, FLT_MAX, FLT_MAX);
 	math::float3 max_v(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
 
     Mesh dst_mesh;
+
+    dst_mesh.name = name;
 
     glGenBuffers(1, &dst_mesh.vbo);
     glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
@@ -152,7 +158,7 @@ void ModuleModelLoader::GenerateMesh(par_shapes_mesh* shape)
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    // Indices
+    // indices
 
     glGenBuffers(1, &dst_mesh.ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst_mesh.ibo);
@@ -237,9 +243,9 @@ void ModuleModelLoader::Clear()
 
     for (unsigned i = 0; i < materials.size(); ++i)
     {
-        if (materials[i].texture0 != 0)
+        if (materials[i].diffuse_map != 0)
         {
-            App->textures->Unload(materials[i].texture0);
+            App->textures->Unload(materials[i].diffuse_map);
         }
     }
 
@@ -257,6 +263,8 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
         const aiMesh* src_mesh = scene->mMeshes[i];
 
         Mesh dst_mesh;
+
+        dst_mesh.name = src_mesh->mName.data;
 
         glGenBuffers(1, &dst_mesh.vbo);
         glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
@@ -366,7 +374,7 @@ void ModuleModelLoader::GenerateMaterials(const aiScene* scene)
 
         if(src_material->GetTexture(aiTextureType_DIFFUSE, 0, &file, &mapping, &uvindex) == AI_SUCCESS)
 		{
-            dst_material.texture0 = App->textures->Load(file.data, false);
+            dst_material.diffuse_map = App->textures->Load(file.data, false);
         }
 
         dst_material.program = unsigned(ModulePrograms::DEFAULT_PROGRAM);

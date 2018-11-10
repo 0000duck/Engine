@@ -4,6 +4,7 @@
 #include "Module.h"
 
 class ArcBall;
+class PanelGOTree;
 
 class ModuleEditor : public Module
 {
@@ -19,6 +20,7 @@ public:
 
 private:
     ArcBall* camera_ctrl;
+    PanelGOTree* go_tree;
 };
 
 #endif // _MODULE_EDITOR_H_

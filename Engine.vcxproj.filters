@@ -126,6 +126,7 @@
       <Filter>MathGeoLib</Filter>
     </ClCompile>
     <ClCompile Include="ModuleDebugDraw.cpp" />
+    <ClCompile Include="PanelGOTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -325,6 +326,7 @@
       <Filter>MathGeoLib</Filter>
     </ClInclude>
     <ClInclude Include="ModuleDebugDraw.h" />
+    <ClInclude Include="PanelGOTree.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
