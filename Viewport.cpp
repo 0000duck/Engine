@@ -13,7 +13,7 @@ Viewport::Viewport()
 {
     camera_ctrl = new ArcBall;
     camera_ctrl->SetPanning(App->models->bsphere.center);
-    camera_ctrl->SetRadius(App->models->bsphere.radius*2.0f);
+    camera_ctrl->SetRadius(App->models->bsphere.radius*1.5f);
 }
 
 Viewport::~Viewport()

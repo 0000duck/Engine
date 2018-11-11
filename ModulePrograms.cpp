@@ -18,6 +18,8 @@ bool ModulePrograms::Init()
 {
     programs[DEFAULT_PROGRAM] = CreateProgram("default.vs", "default.fs");
     programs[GOURAUD_PROGRAM] = CreateProgram("gouraud.vs", "gouraud.fs");
+    programs[PHONG_PROGRAM]   = CreateProgram("phong.vs", "phong.fs");
+    programs[BLINN_PROGRAM]   = CreateProgram("blinn.vs", "blinn.fs");
 
     return programs[DEFAULT_PROGRAM] != 0 && programs[GOURAUD_PROGRAM] != 0;
 }

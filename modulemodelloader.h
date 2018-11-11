@@ -23,7 +23,11 @@ public:
 	bool            CleanUp     ();
 
     bool            Load        (const char* file);
-    bool            LoadSphere  (const char* name, float size, unsigned slices, unsigned stacks, const math::float4& color);
+    bool            LoadSphere  (const char* name, const math::float3& pos, const math::Quat& rot, float size, 
+                                 unsigned slices, unsigned stacks, const math::float4& color);
+
+    bool            LoadTorus   (const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, 
+                                 unsigned slices, unsigned stacks, const math::float4& color);
     void            Clear       ();
 
 public:
@@ -67,7 +71,7 @@ public:
 
 private:
 
-    void            GenerateMesh        (const char* name, par_shapes_mesh_s* shape);
+    void            GenerateMesh        (const char* name, const math::float3& pos, const math::Quat& rot, par_shapes_mesh_s* shape);
     void            GenerateMeshes      (const aiScene* scene);
     void            GenerateVAO         (Mesh& mesh);
     void            GenerateMaterials   (const aiScene* scene);
@@ -82,6 +86,8 @@ public:
     Mesh                  light_mesh;
     Material              light_material;
     float			      ambient = 0.0f;
+	math::float3          min_v = math::float3(FLT_MAX, FLT_MAX, FLT_MAX);
+	math::float3          max_v = math::float3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 };
 
 #endif // __ModuleModelLoader_h__ 

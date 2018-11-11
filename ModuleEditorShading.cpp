@@ -6,10 +6,13 @@
 #include "ModuleModelLoader.h"
 #include "ModuleEditorShading.h"
 #include "ModulePrograms.h"
+#include "ModuleRender.h"
 
 #include "Viewport.h"
 
 #include "DebugDraw.h"
+
+#include "imgui.h"
 
 ModuleEditorShading::ModuleEditorShading()
 {
@@ -23,17 +26,28 @@ bool ModuleEditorShading::Init()
 {
     bool ok = ModuleEditor::Init();
 
-    App->models->LoadSphere("sphere0", 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-
     ModuleModelLoader* models = App->models;
-    ModuleModelLoader::Material& material = models->materials[App->models->meshes.back().material];
-    material.program       = unsigned(ModulePrograms::GOURAUD_PROGRAM);
-    material.diffuse_color = math::float4(1.0f, 0.0f, 0.0f, 1.0f);
-	material.glossiness    = 1.0f;
-	material.shininess	   = 32.0f;
-    models->ambient        = 0.1f;
-	models->light.pos	   = math::float3(2.0f, 2.0f, 2.0f);
+    models->LoadSphere("sphere0", math::float3::zero, math::Quat::identity, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
+    models->LoadSphere("sphere0", math::float3(2.5f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
+    models->LoadSphere("sphere0", math::float3(5.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
 
+    /*
+    models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.5f, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
+    models->LoadTorus("torus1", math::float3(3.5f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
+    models->LoadTorus("torus2", math::float3(7.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
+    */
+
+    for(unsigned i=0; i< 3; ++i)
+    {
+        ModuleModelLoader::Material& material = models->materials[i];
+        material.program       = i+1;
+        material.diffuse_color = math::float4(1.0f, 0.0f, 0.0f, 1.0f);
+        material.glossiness    = 1.0f;
+        material.shininess	   = 32.0f;
+        models->ambient        = 0.1f;
+    }
+
+	models->light.pos	   = math::float3(2.0f, 2.0f, 2.0f);
 
     App->render->CenterCamera();
 
@@ -48,7 +62,52 @@ update_status ModuleEditorShading::Update()
 
     viewport->Draw();
 
+    ImGui::SetNextWindowPos(ImVec2(916.0f, 16.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(256.0f, 420.0f), ImGuiCond_FirstUseEver);
+
+    if(ImGui::Begin("Parameters"))
+    {
+        ModuleModelLoader::Material& material = App->models->materials[App->models->meshes.back().material];
+
+        //char* program_names[ModulePrograms::PROGRAM_COUNT] = { "Default", "Gouraud", "Phong", "Blinn" };
+        //ImGui::Combo("shader", (int*)&material.program, program_names, ModulePrograms::PROGRAM_COUNT);
+
+        ImGui::ColorEdit4("diffuse color", (float*)&material.diffuse_color);
+        ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
+        ImGui::SliderFloat("gloss", &material.glossiness, 0.0f, 1.0f);
+
+        for(unsigned i=0; i< App->models->materials.size(); ++i)
+        {
+            App->models->materials[i].diffuse_color = material.diffuse_color;
+            App->models->materials[i].shininess = material.shininess;
+            App->models->materials[i].glossiness = material.glossiness;
+        }
+
+        ImGui::Separator();
+        ImGui::SliderFloat3("light position", (float*)&App->models->light.pos, -10.0f, 10.0f);
+        ImGui::Separator();
+        ImGui::Checkbox("show axis", &App->render->show_axis);
+        ImGui::Checkbox("auto rotate", &auto_rotate);
+
+        ImGui::End();
+    }
+
     EndFrame();
+
+    if(auto_rotate)
+    {
+        for(unsigned i=0; i< App->models->meshes.size(); ++i)
+        {
+            ModuleModelLoader::Mesh& mesh  = App->models->meshes[i];
+            math::Quat r;
+            math::float3 t, s;
+            mesh.transform.Decompose(t, r, s);
+
+            math::Quat q(math::float3(0.0f, 1.0f, 0.0f), 0.001f);
+
+            mesh.transform = math::float4x4(q*r, t);
+        }
+    }
 
     return UPDATE_CONTINUE;
 }

@@ -18,6 +18,7 @@ public:
 public:
 
     Viewport* viewport = nullptr;
+    bool auto_rotate   = false;
 };
 
 #endif /* _MODULE_EDITOR_SHADING_H_ */

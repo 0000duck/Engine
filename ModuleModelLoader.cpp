@@ -34,7 +34,7 @@ bool ModuleModelLoader::Init()
 {
     // initial setup
     
-    LoadSphere("light", 0.1f, 10, 10, math::float4(1.0f, 1.0f, 1.0f, 1.0f));
+    LoadSphere("light", math::float3::zero, math::Quat::identity, 0.1f, 10, 10, math::float4(1.0f, 1.0f, 1.0f, 1.0f));
     light_mesh = meshes.back();
     light_material = materials.back();
 
@@ -92,18 +92,19 @@ bool ModuleModelLoader::Load(const char* file)
     return false;
 }
 
-bool ModuleModelLoader::LoadSphere(const char* name, float size, unsigned slices, unsigned stacks, const math::float4& color)
+bool ModuleModelLoader::LoadSphere(const char* name, const math::float3& pos, const math::Quat& rot, float size, 
+                                   unsigned slices, unsigned stacks, const math::float4& color)
 {
-    Clear();
-
     par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(int(slices), int(stacks));
 
 	if (mesh)
 	{
         par_shapes_scale(mesh, size, size, size);
 
-		GenerateMesh(name, mesh);
+		GenerateMesh(name, pos, rot, mesh);
 		par_shapes_free_mesh(mesh);
+
+        meshes.back().material = materials.size();
 
         Material mat;
         mat.program		  = ModulePrograms::DEFAULT_PROGRAM;
@@ -117,15 +118,37 @@ bool ModuleModelLoader::LoadSphere(const char* name, float size, unsigned slices
 	return false;
 }
 
-void ModuleModelLoader::GenerateMesh(const char* name, par_shapes_mesh* shape)
+bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, 
+                                  unsigned slices, unsigned stacks, const math::float4& color)
 {
-	math::float3 min_v(FLT_MAX, FLT_MAX, FLT_MAX);
-	math::float3 max_v(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+    par_shapes_mesh* mesh = par_shapes_create_torus(int(slices), int(stacks), inner_r);
 
+	if (mesh)
+	{
+        par_shapes_scale(mesh, outer_r, outer_r, outer_r);
+		GenerateMesh(name, pos, rot, mesh);
+		par_shapes_free_mesh(mesh);
 
+        meshes.back().material = materials.size();
+
+        Material mat;
+        mat.program		  = ModulePrograms::DEFAULT_PROGRAM;
+        mat.diffuse_color = color;
+
+        materials.push_back(mat);
+
+		return true;
+	}
+
+	return false;
+}
+
+void ModuleModelLoader::GenerateMesh(const char* name, const math::float3& pos, const math::Quat& rot, par_shapes_mesh* shape)
+{
     Mesh dst_mesh;
 
     dst_mesh.name = name;
+    dst_mesh.transform = math::float4x4(rot, pos);
 
     glGenBuffers(1, &dst_mesh.vbo);
     glBindBuffer(GL_ARRAY_BUFFER, dst_mesh.vbo);
@@ -134,10 +157,12 @@ void ModuleModelLoader::GenerateMesh(const char* name, par_shapes_mesh* shape)
 
     for(unsigned i=0; i< unsigned(shape->npoints); ++i)
     {
+        math::float3 point(shape->points[i*3], shape->points[i*3+1], shape->points[i*3+2]);
+        point = dst_mesh.transform.TransformPos(point);
         for(unsigned j=0; j<3; ++j)
         {
-            min_v[j] = min(min_v[j], shape->points[i*3+j]);
-            max_v[j] = max(max_v[j], shape->points[i*3+j]);
+            min_v[j] = min(min_v[j], point[i]);
+            max_v[j] = max(max_v[j], point[i]);
         }
     }
 
@@ -269,13 +294,13 @@ void ModuleModelLoader::Clear()
 
     meshes.clear();
     materials.clear();
+
+	min_v = math::float3(FLT_MAX, FLT_MAX, FLT_MAX);
+	max_v = math::float3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 }
 
 void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 {
-    math::float3 min_v(FLT_MAX, FLT_MAX, FLT_MAX);
-    math::float3 max_v(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
     for(unsigned i=0; i< scene->mNumMeshes; ++i)
     {
         const aiMesh* src_mesh = scene->mMeshes[i];

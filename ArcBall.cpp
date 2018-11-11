@@ -74,7 +74,7 @@ void ArcBall::UpdateCamera(Camera* camera)
     math::Quat rotation_polar(math::float3(0.0f, 1.0f, 0.0f), dragging.polar+params.polar);
     math::Quat rotation_azimuthal(math::float3(1.0f, 0.0f, 0.0f), dragging.azimuthal+params.azimuthal);
     math::Quat rotation = rotation_polar*rotation_azimuthal;
-	camera->SetPosition(rotation.Transform(dragging.panning+params.panning+math::float3(0.0f, 0.0f, dragging.radius+params.radius)));
+	camera->SetPosition(rotation.Transform(math::float3(0.0f, 0.0f, dragging.radius + params.radius)) + dragging.panning + params.panning );
 	camera->SetRotation(rotation);
 }
 

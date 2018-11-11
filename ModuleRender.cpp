@@ -78,7 +78,10 @@ update_status ModuleRender::Update()
     math::float4x4 proj = camera->GetProjMatrix();
     math::float4x4 view = camera->GetViewMatrix();
 
-    dd::axisTriad(math::float4x4::identity, App->models->bsphere.radius*0.15f, App->models->bsphere.radius*1.5f);
+    if(show_axis)
+    {
+        dd::axisTriad(math::float4x4::identity, App->models->bsphere.radius*0.125f, App->models->bsphere.radius*1.25f);
+    }
 
 	// light rendering
     RenderMesh(App->models->light_mesh, App->models->light_material, math::float4x4(math::Quat::identity, App->models->light.pos), view, proj);
@@ -105,7 +108,9 @@ void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleM
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&proj);
 
-	if (material.program == ModulePrograms::GOURAUD_PROGRAM)
+	if (material.program == ModulePrograms::GOURAUD_PROGRAM || 
+        material.program == ModulePrograms::PHONG_PROGRAM ||
+        material.program == ModulePrograms::BLINN_PROGRAM)
 	{
 		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->models->light.pos);
 		glUniform1f(glGetUniformLocation(program,  "ambient"), App->models->ambient);

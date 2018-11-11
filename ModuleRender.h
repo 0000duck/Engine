@@ -39,5 +39,6 @@ public:
     unsigned     fb_tex     = 0;
     unsigned     fb_width   = 0;
     unsigned     fb_height  = 0;
+    bool         show_axis  = true;
 
 };
