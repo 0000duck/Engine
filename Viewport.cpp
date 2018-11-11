@@ -12,8 +12,7 @@
 Viewport::Viewport()
 {
     camera_ctrl = new ArcBall;
-    camera_ctrl->SetPanning(App->models->bsphere.center);
-    camera_ctrl->SetRadius(App->models->bsphere.radius*1.5f);
+    CenterCamera();
 }
 
 Viewport::~Viewport()
@@ -56,4 +55,10 @@ void Viewport::Draw()
         ImGui::EndChild();
     }
 	ImGui::End();
+}
+
+void Viewport::CenterCamera()
+{
+    camera_ctrl->SetPanning(App->models->bsphere.center);
+    camera_ctrl->SetRadius(App->models->bsphere.radius*1.5f);
 }

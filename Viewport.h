@@ -10,6 +10,7 @@ public:
     ~Viewport();
 
     void Draw();
+    void CenterCamera();
 
 private:
     ArcBall* camera_ctrl = nullptr;

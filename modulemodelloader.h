@@ -28,6 +28,9 @@ public:
 
     bool            LoadTorus   (const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, 
                                  unsigned slices, unsigned stacks, const math::float4& color);
+
+    bool            LoadCube    (const char* name, const math::float3& pos, const math::Quat& rot, float size, const math::float4& color);
+
     void            Clear       ();
 
 public:

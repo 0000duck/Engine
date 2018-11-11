@@ -143,6 +143,31 @@ bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, con
 	return false;
 }
 
+bool ModuleModelLoader::LoadCube(const char* name, const math::float3& pos, const math::Quat& rot, float size, const math::float4& color)
+{
+    par_shapes_mesh* mesh = par_shapes_create_cube();
+    par_shapes_compute_normals(mesh);
+
+	if (mesh)
+	{
+        par_shapes_scale(mesh, size, size, size);
+		GenerateMesh(name, pos, rot, mesh);
+		par_shapes_free_mesh(mesh);
+
+        meshes.back().material = materials.size();
+
+        Material mat;
+        mat.program		  = ModulePrograms::DEFAULT_PROGRAM;
+        mat.diffuse_color = color;
+
+        materials.push_back(mat);
+
+		return true;
+	}
+
+	return false;
+}
+
 void ModuleModelLoader::GenerateMesh(const char* name, const math::float3& pos, const math::Quat& rot, par_shapes_mesh* shape)
 {
     Mesh dst_mesh;

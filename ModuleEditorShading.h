@@ -17,8 +17,22 @@ public:
 
 public:
 
+    enum Shapes
+    {
+        SPHERE = 0,
+        TORUS,
+        CUBE,
+        SHAPE_COUNT
+    };
+
     Viewport* viewport = nullptr;
     bool auto_rotate   = false;
+    unsigned shape     = 0;
+
+private:
+
+    void            LoadShapes (Shapes s);
+
 };
 
 #endif /* _MODULE_EDITOR_SHADING_H_ */
