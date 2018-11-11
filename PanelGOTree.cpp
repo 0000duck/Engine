@@ -28,6 +28,14 @@ void PanelGOTree::Draw()
 
             if(ImGui::TreeNodeEx(App->models->meshes[i].name.c_str(), flags))
             {
+                if (ImGui::IsItemHoveredRect())
+                {
+                    if (ImGui::IsMouseClicked(0)) 
+                    {
+                        selected = i;
+                    }
+                }
+
                 ImGui::TreePop();
             }
         }

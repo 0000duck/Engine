@@ -7,7 +7,7 @@ public:
     PanelProperties();
     ~PanelProperties();
 
-    void Draw();
+    void Draw(unsigned selected);
 
 private:
 

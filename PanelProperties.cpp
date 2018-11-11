@@ -10,6 +10,8 @@
 
 #include "PanelGOTree.h"
 
+#include "GL/glew.h"
+
 #include "imgui.h"
 
 PanelProperties::PanelProperties()
@@ -20,28 +22,30 @@ PanelProperties::~PanelProperties()
 {
 }
 
-void PanelProperties::Draw()
+void PanelProperties::Draw(unsigned selected)
 {
     ImGui::SetNextWindowPos(ImVec2(916.0f, 16.0f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(256.0f, 420.0f), ImGuiCond_FirstUseEver);
 
     if(ImGui::Begin("Properties"))
     {
-        unsigned selected = App->editor->go_tree->selected;
-        ModuleModelLoader::Mesh& mesh = App->models->meshes[selected];
-
-        // Text Input for the name
-        char name[50];
-        strcpy_s(name, 50, mesh.name.c_str());
-        if (ImGui::InputText("name", name, 50,  ImGuiInputTextFlags_EnterReturnsTrue))
+        if(selected < App->models->meshes.size())
         {
-            mesh.name = name;
+            ModuleModelLoader::Mesh& mesh = App->models->meshes[selected];
+
+            // Text Input for the name
+            char name[50];
+            strcpy_s(name, 50, mesh.name.c_str());
+            if (ImGui::InputText("name", name, 50,  ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                mesh.name = name;
+            }
+
+            // \todo: transform
+
+            DrawMesh(selected);
+            DrawMaterial(mesh.material);
         }
-
-        // \todo: transform
-
-        DrawMesh(selected);
-        DrawMaterial(mesh.material);
 
         ImGui::End();
     }
@@ -64,8 +68,14 @@ void PanelProperties::DrawMaterial(unsigned index)
         ModuleModelLoader::Material& material = App->models->materials[index];
         char* program_names[ModulePrograms::PROGRAM_COUNT] = { "Default", "Gouraud", "Phong", "Blinn" };
         ImGui::Combo("shader", (int*)&material.program, program_names, ModulePrograms::PROGRAM_COUNT);
+
+        if(material.diffuse_map)
+        {
+            ImGui::Image((ImTextureID)material.diffuse_map, ImVec2(128.0f, 128.0f));
+        }
+
         ImGui::ColorEdit4("diffuse color", (float*)&material.diffuse_color);
-		//ImGui::Image(material.diffuse_map);
+
         ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
         ImGui::SliderFloat("gloss", &material.glossiness, 0.0f, 1.0f);
     }

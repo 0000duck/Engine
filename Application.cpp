@@ -7,7 +7,7 @@
 #include "ModulePrograms.h"
 
 #include "ModuleModelLoader.h"
-#include "ModuleEditor.h"
+#include "ModuleEditorScene.h"
 #include "ModuleDebugDraw.h"
 
 using namespace std;
@@ -22,7 +22,7 @@ Application::Application()
     modules.push_back(programs = new ModulePrograms());
 	modules.push_back(input = new ModuleInput());
     modules.push_back(models = new ModuleModelLoader());
-	modules.push_back(editor = new ModuleEditor());
+	modules.push_back(editor = new ModuleEditorScene());
 }
 
 Application::~Application()

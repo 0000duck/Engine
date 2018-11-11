@@ -129,6 +129,7 @@
     <ClCompile Include="PanelGOTree.cpp" />
     <ClCompile Include="PanelProperties.cpp" />
     <ClCompile Include="Viewport.cpp" />
+    <ClCompile Include="ModuleEditorScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -331,6 +332,7 @@
     <ClInclude Include="PanelGOTree.h" />
     <ClInclude Include="PanelProperties.h" />
     <ClInclude Include="Viewport.h" />
+    <ClInclude Include="ModuleEditorScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
