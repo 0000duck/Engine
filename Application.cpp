@@ -10,9 +10,10 @@
 #include "ModuleEditorScene.h"
 #include "ModuleDebugDraw.h"
 
+
 using namespace std;
 
-Application::Application()
+Application::Application(int argc, char** argv)
 {
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
@@ -22,7 +23,16 @@ Application::Application()
     modules.push_back(programs = new ModulePrograms());
 	modules.push_back(input = new ModuleInput());
     modules.push_back(models = new ModuleModelLoader());
-	modules.push_back(editor = new ModuleEditorScene());
+
+    if(argc > 1 && _stricmp(argv[1], "shading") == 0)
+    {
+        // \todo:
+        modules.push_back(editor = new ModuleEditorScene());
+    }
+    else
+    {
+        modules.push_back(editor = new ModuleEditorScene());
+    }
 }
 
 Application::~Application()

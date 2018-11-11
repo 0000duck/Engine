@@ -18,7 +18,7 @@ class Application
 {
 public:
 
-	Application();
+	Application(int argc, char** argv);
 	~Application();
 
 	bool Init();
@@ -26,6 +26,7 @@ public:
 	bool CleanUp();
 
 public:
+
 	ModuleRender* render = nullptr;
 	ModuleWindow* window = nullptr;
 	ModuleEditor* editor = nullptr;
