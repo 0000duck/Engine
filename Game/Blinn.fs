@@ -1,5 +1,10 @@
 #version 330 core
 
+#define SHOW_ALL 0
+#define SHOW_AMBIENT 1
+#define SHOW_DIFFUSE 2
+#define SHOW_SPECULAR 3
+
 uniform vec4 diffuse_color;
 uniform mat4 view;
 
@@ -7,6 +12,7 @@ uniform vec3 light_pos;
 uniform float ambient;
 uniform float shininess;
 uniform float glossiness;
+uniform int show_type;
 
 in vec2 uv0;
 in vec3 normal;
@@ -33,6 +39,24 @@ void main()
         }
     }
     
-	float intensity = (ambient+diffuse+specular)/(ambient+2.0);
+    float intensity = 0.0;
+
+    if(show_type == SHOW_AMBIENT)
+    {
+        intensity = ambient;
+    }
+    else if(show_type == SHOW_DIFFUSE)
+    {
+        intensity = diffuse;
+    }
+    else if(show_type == SHOW_SPECULAR)
+    {
+        intensity = specular;
+    }
+    else
+    {
+        intensity = (ambient+diffuse+specular)/(ambient+2.0);
+    }
+
     color = vec4(intensity*diffuse_color.x, intensity*diffuse_color.y, intensity*diffuse_color.z, 1.0);
 }

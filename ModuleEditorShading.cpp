@@ -63,19 +63,25 @@ update_status ModuleEditorShading::Update()
         ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
         ImGui::SliderFloat("gloss", &material.glossiness, 0.0f, 1.0f);
 
+        ImGui::Separator();
+
+        ImGui::SliderFloat3("light position", (float*)&App->models->light.pos, -10.0f, 10.0f);
+        ImGui::SliderFloat("ambient", (float*)&App->models->ambient, 0.0f, 1.0f);
+
+        ImGui::Separator();
+        ImGui::Checkbox("show axis", &App->render->show_axis);
+        ImGui::Checkbox("auto rotate", &auto_rotate);
+
+        char* show_components[ModuleModelLoader::SHOW_COMPONENT_COUNT] = { "All", "Ambient", "Diffuse", "Specular" };
+        ImGui::Combo("show light component", (int*)&material.show_component, show_components, ModuleModelLoader::SHOW_COMPONENT_COUNT);
+
         for(unsigned i=0; i< App->models->materials.size(); ++i)
         {
             App->models->materials[i].diffuse_color = material.diffuse_color;
             App->models->materials[i].shininess = material.shininess;
             App->models->materials[i].glossiness = material.glossiness;
+            App->models->materials[i].show_component = material.show_component;
         }
-
-        ImGui::Separator();
-        ImGui::SliderFloat3("light position", (float*)&App->models->light.pos, -10.0f, 10.0f);
-        ImGui::SliderFloat("ambient", (float*)&App->models->ambient, 0.0f, 1.0f);
-        ImGui::Separator();
-        ImGui::Checkbox("show axis", &App->render->show_axis);
-        ImGui::Checkbox("auto rotate", &auto_rotate);
 
         ImGui::End();
     }

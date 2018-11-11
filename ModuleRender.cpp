@@ -116,6 +116,7 @@ void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleM
 		glUniform1f(glGetUniformLocation(program,  "ambient"), App->models->ambient);
 		glUniform1f(glGetUniformLocation(program, "shininess"), material.shininess);
 		glUniform1f(glGetUniformLocation(program, "glossiness"), material.glossiness);
+        glUniform1i(glGetUniformLocation(program, "show_type"), (int)material.show_component);
 	}
 
 	if (material.diffuse_map == 0)

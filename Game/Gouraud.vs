@@ -1,5 +1,10 @@
 #version 330 
 
+#define SHOW_ALL 0
+#define SHOW_AMBIENT 1
+#define SHOW_DIFFUSE 2
+#define SHOW_SPECULAR 3
+
 layout(location = 0) in vec3 vertex_position;
 layout(location = 1) in vec3 vertex_normal;
 layout(location = 2) in vec2 vertex_uv0;
@@ -12,6 +17,8 @@ uniform vec3  light_pos;
 uniform float ambient;
 uniform float shininess;
 uniform float glossiness;
+
+uniform int show_type;
 
 out vec2 uv0;
 out float intensity;
@@ -40,5 +47,20 @@ void main()
         }
     }
     
-	intensity = (ambient+diffuse+specular)/(ambient+2.0);
+    if(show_type == SHOW_AMBIENT)
+    {
+        intensity = ambient;
+    }
+    else if(show_type == SHOW_DIFFUSE)
+    {
+        intensity = diffuse;
+    }
+    else if(show_type == SHOW_SPECULAR)
+    {
+        intensity = specular;
+    }
+    else
+    {
+        intensity = (ambient+diffuse+specular)/(ambient+2.0);
+    }
 }

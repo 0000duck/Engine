@@ -50,13 +50,23 @@ public:
         math::float4x4  transform        = math::float4x4::identity;
     };
 
+    enum ShowComponent
+    {
+        SHOW_ALL = 0,
+        SHOW_AMBIENT,
+        SHOW_DIFFUSE,
+        SHOW_SPECULAR,
+        SHOW_COMPONENT_COUNT
+    };
+
     struct Material
     {
-        unsigned program           = 0;
-        unsigned diffuse_map       = 0;
-        math::float4 diffuse_color = math::float4::zero;
-        float shininess            = 0.0f;
-        float glossiness           = 0.0f;
+        unsigned program                = 0;
+        unsigned diffuse_map            = 0;
+        math::float4 diffuse_color      = math::float4::zero;
+        float shininess                 = 0.0f;
+        float glossiness                = 0.0f;
+        ShowComponent show_component    = SHOW_ALL;
     };
 
     struct Sphere
