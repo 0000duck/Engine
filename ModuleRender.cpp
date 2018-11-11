@@ -50,7 +50,6 @@ bool ModuleRender::Init()
     GenerateFBOTexture(width, height);
 
     camera = new Camera;
-    camera->LookAt(math::float3(0.0f, 5.0f, 10.0f), math::float3(0.0f, 5.0f, 0.0f), math::float3::unitY);
     camera->SetPerspective(math::pi*0.25f, float(width)/float(height), 0.1f, 150.0f);
 
 	return true;
@@ -81,11 +80,14 @@ update_status ModuleRender::Update()
 
     dd::axisTriad(math::float4x4::identity, App->models->bsphere.radius*0.15f, App->models->bsphere.radius*1.5f);
 
+	// light rendering
+    RenderMesh(App->models->light_mesh, App->models->light_material, math::float4x4(math::Quat::identity, App->models->light.pos), view, proj);
+
     for(unsigned i=0; i< App->models->meshes.size(); ++i)
     {
         const ModuleModelLoader::Mesh& mesh = App->models->meshes[i];
 
-        RenderMesh(mesh, App->models->materials[mesh.material], App->models->transform, view, proj);
+        RenderMesh(mesh, App->models->materials[mesh.material], mesh.transform, view, proj);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -113,10 +115,12 @@ void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleM
 
 	if (material.diffuse_map == 0)
 	{
+        glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
 		glUniform4fv(glGetUniformLocation(program, "diffuse_color"), 1, (const float*)&material.diffuse_color);
 	}
 	else
 	{
+        glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 1);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, material.diffuse_map);
 		glUniform1i(glGetUniformLocation(program, "diffuse_map"), 0);
@@ -200,5 +204,10 @@ void ModuleRender::GenerateFBOTexture(unsigned w, unsigned h)
 		fb_width = w;
 		fb_height = h;
     }
+}
+
+void ModuleRender::CenterCamera()
+{
+    camera->LookAt(App->models->bsphere.center+math::float3(0.0f, 0.0f, App->models->bsphere.radius*1.5f), App->models->bsphere.center, math::float3::unitY);
 }
 

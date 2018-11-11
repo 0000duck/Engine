@@ -130,6 +130,7 @@
     <ClCompile Include="PanelProperties.cpp" />
     <ClCompile Include="Viewport.cpp" />
     <ClCompile Include="ModuleEditorScene.cpp" />
+    <ClCompile Include="ModuleEditorShading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -333,6 +334,7 @@
     <ClInclude Include="PanelProperties.h" />
     <ClInclude Include="Viewport.h" />
     <ClInclude Include="ModuleEditorScene.h" />
+    <ClInclude Include="ModuleEditorShading.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

@@ -30,16 +30,17 @@ public:
 
     struct Mesh
     {
-        std::string name;
-        unsigned    vertex_size      = 0;
-        unsigned    vao              = 0;
-        unsigned    vbo              = 0;
-        unsigned    ibo              = 0;
-        unsigned    num_vertices     = 0;
-        unsigned    num_indices      = 0;
-        unsigned    texcoords_offset = 0;
-        unsigned    normals_offset   = 0;
-        unsigned    material         = 0;
+        std::string     name;
+        unsigned        vertex_size      = 0;
+        unsigned        vao              = 0;
+        unsigned        vbo              = 0;
+        unsigned        ibo              = 0;
+        unsigned        num_vertices     = 0;
+        unsigned        num_indices      = 0;
+        unsigned        texcoords_offset = 0;
+        unsigned        normals_offset   = 0;
+        unsigned        material         = 0;
+        math::float4x4  transform        = math::float4x4::identity;
     };
 
     struct Material
@@ -76,9 +77,10 @@ public:
 
     std::vector<Mesh>     meshes;
     std::vector<Material> materials;
-    math::float4x4        transform = math::float4x4::identity;
     Sphere                bsphere;
     Light                 light;
+    Mesh                  light_mesh;
+    Material              light_material;
     float			      ambient = 0.0f;
 };
 

@@ -7,7 +7,10 @@
 #include "ModulePrograms.h"
 
 #include "ModuleModelLoader.h"
+
 #include "ModuleEditorScene.h"
+#include "ModuleEditorShading.h"
+
 #include "ModuleDebugDraw.h"
 
 
@@ -27,7 +30,7 @@ Application::Application(int argc, char** argv)
     if(argc > 1 && _stricmp(argv[1], "shading") == 0)
     {
         // \todo:
-        modules.push_back(editor = new ModuleEditorScene());
+        modules.push_back(editor = new ModuleEditorShading());
     }
     else
     {

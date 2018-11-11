@@ -33,6 +33,13 @@ ModuleModelLoader::~ModuleModelLoader()
 bool ModuleModelLoader::Init()
 {
     // initial setup
+    
+    LoadSphere("light", 0.1f, 10, 10, math::float4(1.0f, 1.0f, 1.0f, 1.0f));
+    light_mesh = meshes.back();
+    light_material = materials.back();
+
+    meshes.clear();
+    materials.clear();
 
     return true;
 }
@@ -45,7 +52,23 @@ update_status ModuleModelLoader::Update()
 bool ModuleModelLoader::CleanUp()
 {
     Clear();
-	return true;
+
+    if(light_mesh.vao != 0)
+    {
+        glDeleteVertexArrays(1, &light_mesh.vao);
+    }
+
+    if (light_mesh.vbo != 0)
+    {
+        glDeleteBuffers(1, &light_mesh.vbo);
+    }
+
+    if (light_mesh.ibo != 0)
+    {
+        glDeleteBuffers(1, &light_mesh.ibo);
+    }
+
+    return true;
 }
 
 bool ModuleModelLoader::Load(const char* file)
@@ -83,7 +106,7 @@ bool ModuleModelLoader::LoadSphere(const char* name, float size, unsigned slices
 		par_shapes_free_mesh(mesh);
 
         Material mat;
-        mat.program		  = ModulePrograms::GOURAUD_PROGRAM;
+        mat.program		  = ModulePrograms::DEFAULT_PROGRAM;
         mat.diffuse_color = color;
 
         materials.push_back(mat);

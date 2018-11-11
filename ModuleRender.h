@@ -22,6 +22,8 @@ public:
 	bool          CleanUp();
 	void          WindowResized(unsigned width, unsigned height);
 
+    void          CenterCamera();
+
 private:
 
     void          RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material, 
