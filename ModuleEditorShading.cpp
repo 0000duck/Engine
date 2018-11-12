@@ -29,6 +29,7 @@ bool ModuleEditorShading::Init()
     viewport = new Viewport;
 
     LoadShapes(Shapes(shape));
+    viewport->CenterCamera();
 
     ModuleModelLoader* models = App->models;
 	models->light.pos = math::float3(3.0f, 3.0f, 3.0f);
@@ -118,20 +119,20 @@ void ModuleEditorShading::LoadShapes(Shapes s)
 
     switch(s)
     {
-        case CUBE:
+        case CYLINDER:
             models->LoadCube("cube0", math::float3::zero, math::Quat::identity, 1.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadCube("cube1", math::float3(2.5f, 0.0f, 0.0f), math::Quat::identity, 1.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadCube("cube2", math::float3(5.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case SPHERE:
-            models->LoadSphere("sphere0", math::float3::zero, math::Quat::identity, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadSphere("sphere1", math::float3(2.5f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadSphere("sphere2", math::float3(5.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere0", math::float3::zero, math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere1", math::float3(2.5f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere2", math::float3(5.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case TORUS:
-            models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.5f, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus1", math::float3(3.5f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus2", math::float3(7.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 20, 20, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus1", math::float3(3.5f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus2", math::float3(7.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
     }
 
@@ -143,7 +144,5 @@ void ModuleEditorShading::LoadShapes(Shapes s)
         material.glossiness    = 1.0f;
         material.shininess	   = 32.0f;
     }
-
-    viewport->CenterCamera();
 }
 

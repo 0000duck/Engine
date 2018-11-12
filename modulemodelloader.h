@@ -18,18 +18,22 @@ public:
     ModuleModelLoader();
     ~ModuleModelLoader();
 
-	bool            Init        ();
-	update_status   Update      ();
-	bool            CleanUp     ();
+	bool            Init            ();
+	update_status   Update          ();
+	bool            CleanUp         ();
 
-    bool            Load        (const char* file);
-    bool            LoadSphere  (const char* name, const math::float3& pos, const math::Quat& rot, float size, 
-                                 unsigned slices, unsigned stacks, const math::float4& color);
+    bool            Load            (const char* file);
 
-    bool            LoadTorus   (const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, 
-                                 unsigned slices, unsigned stacks, const math::float4& color);
+    bool            LoadSphere      (const char* name, const math::float3& pos, const math::Quat& rot, float size, 
+                                    unsigned slices, unsigned stacks, const math::float4& color);
 
-    bool            LoadCube    (const char* name, const math::float3& pos, const math::Quat& rot, float size, const math::float4& color);
+    bool            LoadCylinder    (const char* name, const math::float3& pos, const math::Quat& rot, float size, 
+                                    unsigned slices, unsigned stacks, const math::float4& color);
+
+    bool            LoadTorus       (const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, 
+                                    unsigned slices, unsigned stacks, const math::float4& color);
+
+    bool            LoadCube        (const char* name, const math::float3& pos, const math::Quat& rot, float size, const math::float4& color);
 
     void            Clear       ();
 

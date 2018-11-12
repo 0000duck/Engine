@@ -22,6 +22,7 @@ out vec4 color;
 
 void main()
 {
+    vec3 normal      = normalize(normal);
     vec3 light_dir   = normalize(light_pos-position);
     float diffuse    = max(0.0, dot(normal, light_dir));
     float specular   = 0.0;

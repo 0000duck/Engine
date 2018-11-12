@@ -22,6 +22,7 @@ out vec4 color;
 
 void main()
 {
+    vec3 normal      = normalize(normal);
     vec3 light_dir   = normalize(light_pos-position);
     float diffuse    = max(0.0, dot(normal, light_dir));
     float specular   = 0.0;
@@ -30,7 +31,7 @@ void main()
     {
         vec3 view_pos    = transpose(mat3(view))*(-view[3].xyz);
         vec3 view_dir    = normalize(view_pos-position);
-        vec3 reflect_dir = reflect(-light_dir, normal);
+        vec3 reflect_dir = normalize(reflect(-light_dir, normal));
         float sp         = max(dot(view_dir, reflect_dir), 0.0);
 
         if(sp > 0.0)
