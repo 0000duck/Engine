@@ -171,9 +171,37 @@ bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, con
 
 bool ModuleModelLoader::LoadCube(const char* name, const math::float3& pos, const math::Quat& rot, float size, const math::float4& color)
 {
-    par_shapes_mesh* mesh = par_shapes_create_cube();
-    par_shapes_compute_normals(mesh);
+    //par_shapes_mesh* mesh = par_shapes_create_cube();
+    //par_shapes_compute_normals(mesh);
+    
+    par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
+    par_shapes_mesh* top = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* bottom = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* back = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* left = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* right = par_shapes_create_plane(1, 1);
 
+    par_shapes_rotate(top, -float(PAR_PI*0.5), (float*)&math::float3::unitX);
+	par_shapes_translate(top, 0.0f, 1.0f, 0.0f);
+
+	par_shapes_rotate(bottom, float(PAR_PI*0.5), (float*)&math::float3::unitX);
+	par_shapes_translate(bottom, 0.0f, 0.0f, -1.0f);
+
+	par_shapes_rotate(back, float(PAR_PI), (float*)&math::float3::unitX);
+	par_shapes_translate(back, 0.0f, 1.0f, -1.0f);
+
+	par_shapes_rotate(left, float(-PAR_PI*0.5), (float*)&math::float3::unitY);
+	par_shapes_translate(left, 0.0f, 0.0f, -1.0f);
+
+	par_shapes_rotate(right, float(PAR_PI*0.5), (float*)&math::float3::unitY);
+	par_shapes_translate(right, 1.0f, 0.0f, 0.0f);
+
+    par_shapes_merge_and_free(mesh, top);
+	par_shapes_merge_and_free(mesh, bottom);
+	par_shapes_merge_and_free(mesh, back);
+	par_shapes_merge_and_free(mesh, left);
+	par_shapes_merge_and_free(mesh, right);
+	 
 	if (mesh)
 	{
         par_shapes_scale(mesh, size, size, size);
