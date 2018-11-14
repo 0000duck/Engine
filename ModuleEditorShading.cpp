@@ -33,7 +33,7 @@ bool ModuleEditorShading::Init()
 
     ModuleModelLoader* models = App->models;
 	models->light.pos = math::float3(3.0f, 3.0f, 3.0f);
-    models->ambient   = 0.3f;
+    models->ambient   = 0.2f;
 
     App->render->CenterCamera();
 
@@ -135,9 +135,9 @@ void ModuleEditorShading::LoadShapes(Shapes s)
             models->LoadSphere("sphere2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case TORUS:
-            models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.4f, 0.8f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 0.4f, 0.8f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 0.4f, 0.8f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
     }
 
@@ -145,7 +145,7 @@ void ModuleEditorShading::LoadShapes(Shapes s)
     {
         ModuleModelLoader::Material& material = models->materials[i];
         material.program       = i+1;
-        material.diffuse_color = math::float4(1.0f, 0.0f, 0.0f, 1.0f);
+        material.diffuse_color = math::float4(0.6f, 0.0f, 0.0f, 1.0f);
         material.glossiness    = 1.0f;
         material.shininess	   = 32.0f;
     }

@@ -61,6 +61,6 @@ void main()
     }
     else
     {
-        intensity = (ambient+diffuse+specular)/(ambient+2.0);
+        intensity = (ambient+diffuse+specular);
     }
 }

@@ -265,12 +265,6 @@ void ModuleModelLoader::GenerateMesh(const char* name, const math::float3& pos, 
         offset_acc += sizeof(math::float3);
     }
 
-    if(shape->tcoords)
-    {
-        dst_mesh.texcoords_offset = offset_acc;
-        offset_acc += sizeof(math::float2);
-    }
-
     dst_mesh.vertex_size = offset_acc;
 
     glBufferData(GL_ARRAY_BUFFER, dst_mesh.vertex_size*shape->npoints, nullptr, GL_STATIC_DRAW);
@@ -281,13 +275,6 @@ void ModuleModelLoader::GenerateMesh(const char* name, const math::float3& pos, 
     if(shape->normals)
     {
         glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.normals_offset*shape->npoints, sizeof(math::float3)*shape->npoints, shape->normals);
-    }
-
-    // tcoords
-    
-    if(shape->tcoords)
-    {
-        glBufferSubData(GL_ARRAY_BUFFER, dst_mesh.texcoords_offset*shape->npoints, sizeof(math::float2)*shape->npoints, shape->tcoords);
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);

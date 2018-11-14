@@ -56,7 +56,7 @@ void main()
     }
     else
     {
-        intensity = (ambient+diffuse+specular)/(ambient+2.0);
+        intensity = (ambient+diffuse+specular); 
     }
 
     color = vec4(intensity*diffuse_color.x, intensity*diffuse_color.y, intensity*diffuse_color.z, 1.0);
