@@ -121,7 +121,6 @@ bool ModuleModelLoader::LoadSphere(const char* name, const math::float3& pos, co
 bool ModuleModelLoader::LoadCylinder(const char* name, const math::float3& pos, const math::Quat& rot, float height, 
                                      float radius, unsigned slices, unsigned stacks, const math::float4& color)
 {
-    // \note: disk doesn´t contains texture coords
     par_shapes_mesh* mesh = par_shapes_create_cylinder(int(slices), int(stacks));
     par_shapes_rotate(mesh, -float(PAR_PI*0.5), (float*)&math::float3::unitX);
 	par_shapes_translate(mesh, 0.0f, -0.5f, 0.0f);

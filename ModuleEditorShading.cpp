@@ -55,22 +55,28 @@ update_status ModuleEditorShading::Update()
 
         char* shape_names[SHAPE_COUNT] = { "Sphere", "Torus", "Cube", "Cylinder" };
 
-        if(ImGui::Combo("shape", (int*)&shape, shape_names, SHAPE_COUNT))
+        ImGui::CollapsingHeader("Shape and material");
+        for(unsigned i=0; i< SHAPE_COUNT; ++i)
         {
-            LoadShapes(Shapes(shape));
+            if(ImGui::RadioButton(shape_names[i], shape == Shapes(i)))
+            {
+                LoadShapes(Shapes(i));
+                shape = i;
+            }
         }
 
         ImGui::ColorEdit4("diffuse color", (float*)&material.diffuse_color);
         ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
         ImGui::SliderFloat("gloss", &material.glossiness, 0.0f, 1.0f);
 
-        ImGui::Separator();
+        ImGui::CollapsingHeader("Light");
 
         ImGui::SliderFloat3("light position", (float*)&App->models->light.pos, -10.0f, 10.0f);
         ImGui::SliderFloat("ambient", (float*)&App->models->ambient, 0.0f, 1.0f);
 
-        ImGui::Separator();
+        ImGui::CollapsingHeader("Options");
         ImGui::Checkbox("show axis", &App->render->show_axis);
+        ImGui::Checkbox("show grid", &App->render->show_grid);
         ImGui::Checkbox("auto rotate", &auto_rotate);
 
         char* show_components[ModuleModelLoader::SHOW_COMPONENT_COUNT] = { "All", "Ambient", "Diffuse", "Specular" };
@@ -135,9 +141,9 @@ void ModuleEditorShading::LoadShapes(Shapes s)
             models->LoadSphere("sphere2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case TORUS:
-            models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.4f, 0.8f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 0.4f, 0.8f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 0.4f, 0.8f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
     }
 

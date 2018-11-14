@@ -83,6 +83,11 @@ update_status ModuleRender::Update()
         dd::axisTriad(math::float4x4::identity, App->models->bsphere.radius*0.125f, App->models->bsphere.radius*1.25f);
     }
 
+    if(show_grid)
+    {
+        dd::xzSquareGrid(-1000.0f, 1000.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
+    }
+
 	// light rendering
     RenderMesh(App->models->light_mesh, App->models->light_material, math::float4x4(math::Quat::identity, App->models->light.pos), view, proj);
 
