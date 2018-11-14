@@ -21,6 +21,7 @@ public:
     {
         SPHERE = 0,
         TORUS,
+        CUBE,
         CYLINDER,
         SHAPE_COUNT
     };

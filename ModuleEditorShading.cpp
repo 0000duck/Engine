@@ -53,7 +53,7 @@ update_status ModuleEditorShading::Update()
     {
         ModuleModelLoader::Material& material = App->models->materials[App->models->meshes.back().material];
 
-        char* shape_names[SHAPE_COUNT] = { "Sphere", "Torus", "Cube" };
+        char* shape_names[SHAPE_COUNT] = { "Sphere", "Torus", "Cube", "Cylinder" };
 
         if(ImGui::Combo("shape", (int*)&shape, shape_names, SHAPE_COUNT))
         {
@@ -119,20 +119,25 @@ void ModuleEditorShading::LoadShapes(Shapes s)
 
     switch(s)
     {
+        case CUBE:
+            models->LoadCube("cube0", math::float3::zero, math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCube("cube1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCube("cube2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            break;
         case CYLINDER:
-            models->LoadCube("cube0", math::float3::zero, math::Quat::identity, 1.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadCube("cube1", math::float3(2.5f, 0.0f, 0.0f), math::Quat::identity, 1.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadCube("cube2", math::float3(5.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCylinder("cylinder0", math::float3::zero, math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCylinder("cylinder1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCylinder("cylinder2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case SPHERE:
             models->LoadSphere("sphere0", math::float3::zero, math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadSphere("sphere1", math::float3(2.5f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadSphere("sphere2", math::float3(5.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case TORUS:
             models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus1", math::float3(3.5f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus2", math::float3(7.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
     }
 

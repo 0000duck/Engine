@@ -27,8 +27,8 @@ public:
     bool            LoadSphere      (const char* name, const math::float3& pos, const math::Quat& rot, float size, 
                                     unsigned slices, unsigned stacks, const math::float4& color);
 
-    bool            LoadCylinder    (const char* name, const math::float3& pos, const math::Quat& rot, float size, 
-                                    unsigned slices, unsigned stacks, const math::float4& color);
+    bool            LoadCylinder    (const char* name, const math::float3& pos, const math::Quat& rot, float height, 
+                                    float radius, unsigned slices, unsigned stacks, const math::float4& color);
 
     bool            LoadTorus       (const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, 
                                     unsigned slices, unsigned stacks, const math::float4& color);
