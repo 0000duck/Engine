@@ -28,11 +28,16 @@ bool ModuleEditorShading::Init()
 
     viewport = new Viewport;
 
-    LoadShapes(Shapes(shape));
+    ModuleModelLoader::Material material;
+    material.diffuse_color = math::float4(0.6f, 0.0f, 0.0f, 1.0f);
+    material.glossiness    = 1.0f;
+    material.shininess	   = 32.0f;
+
+    LoadShapes(Shapes(shape), material);
     viewport->CenterCamera();
 
     ModuleModelLoader* models = App->models;
-	models->light.pos = math::float3(3.0f, 3.0f, 3.0f);
+	models->light.pos = math::float3(6.0f, 8.0f, 3.0f);
     models->ambient   = 0.2f;
 
     App->render->CenterCamera();
@@ -55,32 +60,38 @@ update_status ModuleEditorShading::Update()
 
         char* shape_names[SHAPE_COUNT] = { "Sphere", "Torus", "Cube", "Cylinder" };
 
-        ImGui::CollapsingHeader("Shape and material");
-        for(unsigned i=0; i< SHAPE_COUNT; ++i)
+        if(ImGui::CollapsingHeader("Shape and material"))
         {
-            if(ImGui::RadioButton(shape_names[i], shape == Shapes(i)))
+            for(unsigned i=0; i< SHAPE_COUNT; ++i)
             {
-                LoadShapes(Shapes(i));
-                shape = i;
+                if(ImGui::RadioButton(shape_names[i], shape == Shapes(i)))
+                {
+                    ModuleModelLoader::Material material = App->models->materials[0];
+                    LoadShapes(Shapes(i), material);
+                    shape = i;
+                }
             }
+
+            ImGui::ColorEdit4("diffuse color", (float*)&material.diffuse_color);
+            ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
+            ImGui::SliderFloat("gloss", &material.glossiness, 0.0f, 1.0f);
         }
 
-        ImGui::ColorEdit4("diffuse color", (float*)&material.diffuse_color);
-        ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
-        ImGui::SliderFloat("gloss", &material.glossiness, 0.0f, 1.0f);
+        if(ImGui::CollapsingHeader("Light"))
+        {
+            ImGui::SliderFloat3("light position", (float*)&App->models->light.pos, -10.0f, 10.0f);
+            ImGui::SliderFloat("ambient", (float*)&App->models->ambient, 0.0f, 1.0f);
+        }
 
-        ImGui::CollapsingHeader("Light");
+        if(ImGui::CollapsingHeader("Options"))
+        {
+            ImGui::Checkbox("show axis", &App->render->show_axis);
+            ImGui::Checkbox("show grid", &App->render->show_grid);
+            ImGui::Checkbox("auto rotate", &auto_rotate);
 
-        ImGui::SliderFloat3("light position", (float*)&App->models->light.pos, -10.0f, 10.0f);
-        ImGui::SliderFloat("ambient", (float*)&App->models->ambient, 0.0f, 1.0f);
-
-        ImGui::CollapsingHeader("Options");
-        ImGui::Checkbox("show axis", &App->render->show_axis);
-        ImGui::Checkbox("show grid", &App->render->show_grid);
-        ImGui::Checkbox("auto rotate", &auto_rotate);
-
-        char* show_components[ModuleModelLoader::SHOW_COMPONENT_COUNT] = { "All", "Ambient", "Diffuse", "Specular" };
-        ImGui::Combo("show light component", (int*)&material.show_component, show_components, ModuleModelLoader::SHOW_COMPONENT_COUNT);
+            char* show_components[ModuleModelLoader::SHOW_COMPONENT_COUNT] = { "All", "Ambient", "Diffuse", "Specular" };
+            ImGui::Combo("show light component", (int*)&material.show_component, show_components, ModuleModelLoader::SHOW_COMPONENT_COUNT);
+        }
 
         for(unsigned i=0; i< App->models->materials.size(); ++i)
         {
@@ -118,7 +129,7 @@ bool ModuleEditorShading::CleanUp()
     return ModuleEditor::CleanUp();
 }
 
-void ModuleEditorShading::LoadShapes(Shapes s)
+void ModuleEditorShading::LoadShapes(Shapes s, const ModuleModelLoader::Material& material)
 {
     ModuleModelLoader* models = App->models;
     models->Clear();
@@ -126,34 +137,32 @@ void ModuleEditorShading::LoadShapes(Shapes s)
     switch(s)
     {
         case CUBE:
-            models->LoadCube("cube0", math::float3::zero, math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadCube("cube1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadCube("cube2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCube("cube0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCube("cube1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCube("cube2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case CYLINDER:
-            models->LoadCylinder("cylinder0", math::float3::zero, math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadCylinder("cylinder1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadCylinder("cylinder2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCylinder("cylinder0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCylinder("cylinder1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCylinder("cylinder2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case SPHERE:
-            models->LoadSphere("sphere0", math::float3::zero, math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadSphere("sphere1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadSphere("sphere2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case TORUS:
-            models->LoadTorus("torus0", math::float3::zero, math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus1", math::float3(3.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-            models->LoadTorus("torus2", math::float3(6.0f, 0.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
     }
 
     for(unsigned i=0; i< models->materials.size(); ++i)
     {
-        ModuleModelLoader::Material& material = models->materials[i];
-        material.program       = i+1;
-        material.diffuse_color = math::float4(0.6f, 0.0f, 0.0f, 1.0f);
-        material.glossiness    = 1.0f;
-        material.shininess	   = 32.0f;
+        models->materials[i] = material;
+        models->materials[i].program = i+1;
+
     }
 }
 

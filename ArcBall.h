@@ -9,9 +9,9 @@ class ArcBall
 {
 	struct Params
 	{
-		float 	     radius = 0.0f;
-		float 	     polar = 0.0f;
-		float        azimuthal = 0.0f;
+		float 	     radius     = 0.0f;
+		float 	     polar      = 0.0f;
+		float        azimuthal  = 0.0f;
         math::float3 panning = math::float3::zero;
 	};
 

@@ -2,6 +2,7 @@
 #define _MODULE_EDITOR_SHADING_H_
 
 #include "ModuleEditor.h"
+#include "ModuleModelLoader.h"
 
 class Viewport;
 
@@ -32,7 +33,7 @@ public:
 
 private:
 
-    void            LoadShapes (Shapes s);
+    void            LoadShapes (Shapes s, const ModuleModelLoader::Material& material);
 
 };
 

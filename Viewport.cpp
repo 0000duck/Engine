@@ -60,5 +60,5 @@ void Viewport::Draw()
 void Viewport::CenterCamera()
 {
     camera_ctrl->SetPanning(App->models->bsphere.center);
-    camera_ctrl->SetRadius(App->models->bsphere.radius*1.5f);
+    camera_ctrl->SetRadius(max(App->models->bsphere.radius*1.5f, 2.0f));
 }

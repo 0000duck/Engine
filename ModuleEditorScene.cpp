@@ -1,5 +1,7 @@
 #include "Globals.h"
 
+#include "Application.h"
+#include "ModuleModelLoader.h"
 #include "ModuleEditorScene.h"
 
 #include "Viewport.h"
@@ -17,6 +19,8 @@ ModuleEditorScene::~ModuleEditorScene()
 bool ModuleEditorScene::Init()
 {
     bool ok = ModuleEditor::Init();
+
+    //App->models->Load("BakerHouse.fbx");
 
     if(ok)
     {

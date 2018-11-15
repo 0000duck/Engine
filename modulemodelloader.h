@@ -18,9 +18,9 @@ public:
     ModuleModelLoader();
     ~ModuleModelLoader();
 
-	bool            Init            ();
-	update_status   Update          ();
-	bool            CleanUp         ();
+	bool            Init            () override;
+	update_status   Update          () override;
+	bool            CleanUp         () override;
 
     bool            Load            (const char* file);
 
@@ -82,7 +82,7 @@ public:
     struct Light
     {
         math::float4 color = math::float4::one;
-        math::float3 pos   = math::float3::zero;
+        math::float3 pos   = math::float3::one;
     };
 
 

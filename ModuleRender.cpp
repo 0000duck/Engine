@@ -78,14 +78,15 @@ update_status ModuleRender::Update()
     math::float4x4 proj = camera->GetProjMatrix();
     math::float4x4 view = camera->GetViewMatrix();
 
-    if(show_axis)
-    {
-        dd::axisTriad(math::float4x4::identity, App->models->bsphere.radius*0.125f, App->models->bsphere.radius*1.25f);
-    }
-
     if(show_grid)
     {
-        dd::xzSquareGrid(-1000.0f, 1000.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
+        dd::xzSquareGrid(-40.0f, 40.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
+    }
+
+    if(show_axis)
+    {
+        float axis_size = max(App->models->bsphere.radius, 1.0f);
+        dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, true);
     }
 
 	// light rendering

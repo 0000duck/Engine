@@ -10,6 +10,8 @@
 
 ArcBall::ArcBall() 
 {
+    params.polar = math::pi*0.25f;
+    params.azimuthal = -math::pi*0.25f;
 }
 
 ArcBall::~ArcBall()
