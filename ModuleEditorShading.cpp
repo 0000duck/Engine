@@ -9,7 +9,7 @@
 #include "ModuleRender.h"
 
 #include "Viewport.h"
-
+#include "Camera.h"
 #include "DebugDraw.h"
 
 #include "imgui.h"
@@ -48,6 +48,7 @@ update_status ModuleEditorShading::Update()
     InitFrame();
 
     DrawDebugData();
+
     viewport->Draw();
 
     ImGui::SetNextWindowPos(ImVec2(916.0f, 16.0f), ImGuiCond_FirstUseEver);
@@ -78,7 +79,7 @@ update_status ModuleEditorShading::Update()
 
         if(ImGui::CollapsingHeader("Light"))
         {
-            ImGui::SliderFloat3("light position", (float*)&App->models->light.pos, -10.0f, 10.0f);
+            ImGui::SliderFloat3("light position", (float*)&App->models->light.pos, -15.0f, 15.0f);
             ImGui::SliderFloat("ambient", (float*)&App->models->ambient, 0.0f, 1.0f);
         }
 
@@ -139,21 +140,25 @@ void ModuleEditorShading::LoadShapes(Shapes s, const ModuleModelLoader::Material
             models->LoadCube("cube0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadCube("cube1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadCube("cube2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCube("cube3", math::float3(11.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case CYLINDER:
             models->LoadCylinder("cylinder0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadCylinder("cylinder1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadCylinder("cylinder2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadCylinder("cylinder3", math::float3(11.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case SPHERE:
             models->LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadSphere("sphere2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadSphere("sphere3", math::float3(11.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         case TORUS:
             models->LoadTorus("torus0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadTorus("torus1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             models->LoadTorus("torus2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+            models->LoadTorus("torus3", math::float3(11.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
     }
 
@@ -161,7 +166,6 @@ void ModuleEditorShading::LoadShapes(Shapes s, const ModuleModelLoader::Material
     {
         models->materials[i] = material;
         models->materials[i].program = i+1;
-
     }
 }
 

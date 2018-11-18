@@ -17,11 +17,19 @@ ModulePrograms::~ModulePrograms()
 bool ModulePrograms::Init()
 {
     programs[DEFAULT_PROGRAM] = CreateProgram("default.vs", "default.fs");
+    programs[FLAT_PROGRAM]    = CreateProgram("flat.vs", "flat.fs");
     programs[GOURAUD_PROGRAM] = CreateProgram("gouraud.vs", "gouraud.fs");
     programs[PHONG_PROGRAM]   = CreateProgram("phong.vs", "phong.fs");
     programs[BLINN_PROGRAM]   = CreateProgram("blinn.vs", "blinn.fs");
 
-    return programs[DEFAULT_PROGRAM] != 0 && programs[GOURAUD_PROGRAM] != 0;
+    bool ok = true;
+
+    for(unsigned i=0; ok && i< PROGRAM_COUNT; ++i)
+    {
+        ok  = programs[i] != 0;
+    }
+
+    return ok;
 }
 
 unsigned ModulePrograms::CreateProgram(const char* vshader, const char* fshader)

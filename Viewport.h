@@ -13,6 +13,10 @@ public:
     void Draw();
     void CenterCamera();
 
+    const Camera*   GetCamera() const;
+    unsigned        GetWidth () const;
+    unsigned        GetHeight() const;
+
 private:
 
     void GenerateFBOTexture(unsigned w, unsigned h);
@@ -27,5 +31,21 @@ private:
     unsigned fb_width    = 0;
     unsigned fb_height   = 0;
 };
+
+inline const Camera* Viewport::GetCamera() const
+{
+    return camera;
+}
+
+inline unsigned Viewport::GetWidth () const
+{
+    return fb_width;
+}
+
+inline unsigned Viewport::GetHeight() const
+{
+    return fb_height;
+}
+
 
 #endif /* _VIEWPORT_H_ */

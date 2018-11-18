@@ -22,6 +22,7 @@ public:
     enum Program
     {
         DEFAULT_PROGRAM = 0,
+        FLAT_PROGRAM,
         GOURAUD_PROGRAM,
         PHONG_PROGRAM,
         BLINN_PROGRAM,

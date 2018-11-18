@@ -86,8 +86,6 @@ void ModuleRender::Draw(Camera* camera, unsigned fbo, unsigned fb_width, unsigne
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-    glViewport(0, 0, fb_width, fb_height);
-    
     for(unsigned i=0; i< App->models->meshes.size(); ++i)
     {
         const ModuleModelLoader::Mesh& mesh = App->models->meshes[i];

@@ -131,6 +131,7 @@ public:
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        bool already = glIsEnabled(GL_DEPTH_TEST);
         glDisable(GL_DEPTH_TEST);
 
         glBindBuffer(GL_ARRAY_BUFFER, textVBO);
@@ -144,6 +145,11 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindTexture(GL_TEXTURE_2D,  0);
         checkGLError(__FILE__, __LINE__);
+
+        if (already)
+        {
+            glEnable(GL_DEPTH_TEST);
+        }
     }
 
     dd::GlyphTextureHandle createGlyphTexture(int width, int height, const void * pixels) override
