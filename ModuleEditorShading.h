@@ -12,9 +12,9 @@ public:
     ModuleEditorShading();
     ~ModuleEditorShading();
 
-	bool            Init        ();
-	update_status   Update      ();
-	bool            CleanUp     ();
+	bool            Init        () override;
+	update_status   Update      () override;
+	bool            CleanUp     () override;
 
 public:
 
@@ -33,7 +33,9 @@ public:
 
 private:
 
-    void            LoadShapes (Shapes s, const ModuleModelLoader::Material& material);
+    void   LoadShapes (Shapes s, const ModuleModelLoader::Material& material);
+
+private:
 
 };
 

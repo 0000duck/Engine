@@ -15,31 +15,22 @@ public:
 	ModuleRender();
 	~ModuleRender();
 
-	bool          Init();
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
-	bool          CleanUp();
-	void          WindowResized(unsigned width, unsigned height);
+	bool          Init              ();
+	update_status PreUpdate         ();
+	update_status Update            ();
+	update_status PostUpdate        ();
+	bool          CleanUp           ();
 
-    void          CenterCamera();
+    void          CenterCamera      ();
+    void          Draw              (Camera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height);
 
 private:
 
-    void          RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material, 
-                             const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj);
+    void          RenderMesh        (const ModuleModelLoader::Mesh& mesh, const ModuleModelLoader::Material& material, 
+                                    const math::float4x4& model, const math::float4x4& view, const math::float4x4& proj);
 
-    void          GenerateFBOTexture(unsigned w, unsigned h);
 public:
 
 	void*        context    = nullptr;
-    Camera*      camera     = nullptr;
-    unsigned     fbo        = 0;
-    unsigned     fb_depth   = 0;
-    unsigned     fb_tex     = 0;
-    unsigned     fb_width   = 0;
-    unsigned     fb_height  = 0;
-    bool         show_axis  = true;
-    bool         show_grid  = true;
 
 };

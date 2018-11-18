@@ -1,4 +1,3 @@
-#pragma once
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
@@ -21,7 +20,7 @@ Application::Application(int argc, char** argv)
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(render= new ModuleRender());
-	modules.push_back(new ModuleDebugDraw());
+	modules.push_back(debug_draw = new ModuleDebugDraw());
 	modules.push_back(textures = new ModuleTextures());
     modules.push_back(programs = new ModulePrograms());
 	modules.push_back(input = new ModuleInput());
@@ -29,7 +28,6 @@ Application::Application(int argc, char** argv)
 
     if(argc > 1 && _stricmp(argv[1], "shading") == 0)
     {
-        // \todo:
         modules.push_back(editor = new ModuleEditorShading());
     }
     else

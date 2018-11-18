@@ -9,12 +9,19 @@ public:
     ModuleEditor();
     virtual ~ModuleEditor();
 
-	bool            Init        ();
-	bool            CleanUp     ();
+	bool            Init          () override;
+	bool            CleanUp       () override;
+
+    void            DrawDebugData ();
 
 protected:
-    void            InitFrame   ();
-    void            EndFrame    ();
+
+    void            InitFrame     ();
+    void            EndFrame      ();
+
+protected:
+    bool   show_axis  = true;
+    bool   show_grid  = true;
 };
 
 #endif // _MODULE_EDITOR_H_

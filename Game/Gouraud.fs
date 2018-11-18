@@ -4,9 +4,7 @@ uniform vec4 diffuse_color;
 
 out vec4 color;
 
-in vec2 uv0;
 in float intensity;
-
 
 void main()
 {

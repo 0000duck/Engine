@@ -100,9 +100,10 @@ public:
     std::vector<Material> materials;
     Sphere                bsphere;
     Light                 light;
-    Mesh                  light_mesh;
-    Material              light_material;
     float			      ambient = 0.0f;
+
+private:
+
 	math::float3          min_v = math::float3(FLT_MAX, FLT_MAX, FLT_MAX);
 	math::float3          max_v = math::float3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 };

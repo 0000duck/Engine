@@ -40,8 +40,6 @@ bool ModuleEditorShading::Init()
 	models->light.pos = math::float3(6.0f, 8.0f, 3.0f);
     models->ambient   = 0.2f;
 
-    App->render->CenterCamera();
-
     return ok;
 }
 
@@ -49,6 +47,7 @@ update_status ModuleEditorShading::Update()
 {
     InitFrame();
 
+    DrawDebugData();
     viewport->Draw();
 
     ImGui::SetNextWindowPos(ImVec2(916.0f, 16.0f), ImGuiCond_FirstUseEver);
@@ -85,11 +84,11 @@ update_status ModuleEditorShading::Update()
 
         if(ImGui::CollapsingHeader("Options"))
         {
-            ImGui::Checkbox("show axis", &App->render->show_axis);
-            ImGui::Checkbox("show grid", &App->render->show_grid);
+            ImGui::Checkbox("show axis", &show_axis);
+            ImGui::Checkbox("show grid", &show_grid);
             ImGui::Checkbox("auto rotate", &auto_rotate);
 
-            char* show_components[ModuleModelLoader::SHOW_COMPONENT_COUNT] = { "All", "Ambient", "Diffuse", "Specular" };
+            char* show_components[ModuleModelLoader::SHOW_COMPONENT_COUNT] = { "All", "Ambient", "Diffuse", "Specular"  };
             ImGui::Combo("show light component", (int*)&material.show_component, show_components, ModuleModelLoader::SHOW_COMPONENT_COUNT);
         }
 

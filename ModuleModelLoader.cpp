@@ -33,13 +33,21 @@ ModuleModelLoader::~ModuleModelLoader()
 bool ModuleModelLoader::Init()
 {
     // initial setup
-    
-    LoadSphere("light", math::float3::zero, math::Quat::identity, 0.1f, 10, 10, math::float4(1.0f, 1.0f, 1.0f, 1.0f));
-    light_mesh = meshes.back();
-    light_material = materials.back();
 
-    meshes.clear();
-    materials.clear();
+    LoadSphere("sphere0", math::float3(1.0f, 1.0f, 1.0f), math::Quat::identity, 1.0f, 20, 20, math::float4(0.3f, 0.3f, 0.3f, 1.0f));
+	materials.back().glossiness = 0.9f;
+	materials.back().shininess = 64.0f;
+
+    LoadCylinder("cylinder0", math::float3(3.0f, 1.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(0.0f, 0.2f, 0.2f, 1.0f));
+	materials.back().glossiness = 0.9f;
+	materials.back().shininess = 64.0f;
+
+    LoadTorus("torus0", math::float3(0.0f, 1.0f, 3.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(0.2f, 0.2f, 0.0f, 1.0f));
+	materials.back().glossiness = 0.9f;
+	materials.back().shininess = 16.0f;
+
+	light.pos = math::float3(-2.0f, 4.0f, 6.0f);
+    ambient   = 1.0f;
 
     return true;
 }
@@ -52,21 +60,6 @@ update_status ModuleModelLoader::Update()
 bool ModuleModelLoader::CleanUp()
 {
     Clear();
-
-    if(light_mesh.vao != 0)
-    {
-        glDeleteVertexArrays(1, &light_mesh.vao);
-    }
-
-    if (light_mesh.vbo != 0)
-    {
-        glDeleteBuffers(1, &light_mesh.vbo);
-    }
-
-    if (light_mesh.ibo != 0)
-    {
-        glDeleteBuffers(1, &light_mesh.ibo);
-    }
 
     return true;
 }

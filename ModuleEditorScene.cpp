@@ -36,6 +36,7 @@ update_status ModuleEditorScene::Update()
 {
     InitFrame();
 
+    DrawDebugData();
     viewport->Draw();
     go_tree->Draw();
     properties->Draw(go_tree->selected);

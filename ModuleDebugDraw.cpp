@@ -30,6 +30,8 @@ public:
         glUniformMatrix4fv(linePointProgram_MvpMatrixLocation,
                            1, GL_TRUE, reinterpret_cast<float*>(&mvpMatrix));
 
+        bool already = glIsEnabled(GL_DEPTH_TEST);
+
         if (depthEnabled)
         {
             glEnable(GL_DEPTH_TEST);
@@ -50,6 +52,16 @@ public:
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         checkGLError(__FILE__, __LINE__);
+
+        if (already)
+        {
+            glEnable(GL_DEPTH_TEST);
+        }
+        else
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+
     }
 
     void drawLineList(const dd::DrawVertex * lines, int count, bool depthEnabled) override
@@ -62,6 +74,8 @@ public:
 
         glUniformMatrix4fv(linePointProgram_MvpMatrixLocation,
                            1, GL_TRUE, reinterpret_cast<const float*>(&mvpMatrix));
+
+        bool already = glIsEnabled(GL_DEPTH_TEST);
 
         if (depthEnabled)
         {
@@ -83,6 +97,16 @@ public:
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         checkGLError(__FILE__, __LINE__);
+
+        if (already)
+        {
+            glEnable(GL_DEPTH_TEST);
+        }
+        else
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+
     }
 
     void drawGlyphList(const dd::DrawVertex * glyphs, int count, dd::GlyphTextureHandle glyphTex) override
@@ -572,18 +596,21 @@ bool ModuleDebugDraw::CleanUp()
 
 update_status  ModuleDebugDraw::Update()
 {
-	math::float4x4 view  = App->render->camera->GetViewMatrix();
-	math::float4x4 proj = App->render->camera->GetProjMatrix();
+	return UPDATE_CONTINUE;
+}
 
-    implementation->width = App->render->fb_width;
-    implementation->height = App->render->fb_height;
+void ModuleDebugDraw::Draw(Camera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height)
+{
+	math::float4x4 view  = camera->GetViewMatrix();
+	math::float4x4 proj = camera->GetProjMatrix();
+
+    implementation->width     = fb_width;
+    implementation->height    = fb_height;
     implementation->mvpMatrix = proj * view;
 
-    glBindFramebuffer(GL_FRAMEBUFFER, App->render->fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     dd::flush();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    return UPDATE_CONTINUE;
 }
 
 

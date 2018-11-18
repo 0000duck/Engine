@@ -14,7 +14,6 @@ uniform float shininess;
 uniform float glossiness;
 uniform int show_type;
 
-in vec2 uv0;
 in vec3 normal;
 in vec3 position;
 

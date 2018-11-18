@@ -34,6 +34,7 @@ public:
 	ModuleInput* input = nullptr;
     ModulePrograms* programs = nullptr;
     ModuleModelLoader* models = nullptr;
+    ModuleDebugDraw* debug_draw = nullptr;
 
 private:
 

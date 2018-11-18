@@ -20,7 +20,6 @@ uniform float glossiness;
 
 uniform int show_type;
 
-out vec2 uv0;
 out float intensity;
 
 void main()
@@ -28,7 +27,6 @@ void main()
     vec3 position    = (model*vec4(vertex_position, 1.0)).xyz;
     vec3 normal      = (model*vec4(vertex_normal, 0.0)).xyz;
     gl_Position      = proj*view*vec4(position, 1.0);
-    uv0              = vertex_uv0;
 
     vec3 light_dir   = normalize(light_pos-position);
     float diffuse    = max(0.0, dot(normal, light_dir));

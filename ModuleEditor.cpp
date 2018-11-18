@@ -5,6 +5,7 @@
 #include "ModuleRender.h"
 
 #include "Application.h"
+#include "debugdraw.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 #include "imgui.h"
@@ -42,6 +43,23 @@ void ModuleEditor::InitFrame()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(App->window->window);
     ImGui::NewFrame();
+
+}
+
+void ModuleEditor::DrawDebugData()
+{
+    if(show_grid)
+    {
+        dd::xzSquareGrid(-40.0f, 40.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
+    }
+
+    if(show_axis)
+    {
+        float axis_size = max(App->models->bsphere.radius, 1.0f);
+        dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);
+    }
+
+	dd::sphere(App->models->light.pos, math::float3(1.0f, 1.0f, 1.0f), 0.05f);
 }
 
 void ModuleEditor::EndFrame()
