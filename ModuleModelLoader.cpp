@@ -35,18 +35,27 @@ bool ModuleModelLoader::Init()
     // initial setup
 
     LoadSphere("sphere0", math::float3(1.0f, 1.0f, 1.0f), math::Quat::identity, 1.0f, 20, 20, math::float4(0.3f, 0.3f, 0.3f, 1.0f));
-	materials.back().glossiness = 0.9f;
-	materials.back().shininess = 64.0f;
+	materials.back().k_specular = 0.9f;
+	materials.back().shininess  = 64.0f;
+    materials.back().k_specular = 0.6f;
+    materials.back().k_diffuse  = 0.5f;
+    materials.back().k_ambient  = 0.7f;
 
     LoadCylinder("cylinder0", math::float3(3.0f, 1.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(0.0f, 0.2f, 0.2f, 1.0f));
-	materials.back().glossiness = 0.9f;
-	materials.back().shininess = 64.0f;
+	materials.back().k_specular = 0.9f;
+	materials.back().shininess  = 64.0f;
+    materials.back().k_specular = 0.6f;
+    materials.back().k_diffuse  = 0.5f;
+    materials.back().k_ambient  = 0.7f;
 
     LoadTorus("torus0", math::float3(0.0f, 1.0f, 3.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(0.2f, 0.2f, 0.0f, 1.0f));
-	materials.back().glossiness = 0.9f;
-	materials.back().shininess = 16.0f;
+	materials.back().k_specular = 0.9f;
+	materials.back().shininess  = 16.0f;
+    materials.back().k_specular = 0.6f;
+    materials.back().k_diffuse  = 0.5f;
+    materials.back().k_ambient  = 0.7f;
 
-	light.pos = math::float3(-2.0f, 4.0f, 6.0f);
+	light.pos = math::float3(-2.0f, 0.0f, 6.0f);
     ambient   = 1.0f;
 
     return true;
@@ -100,8 +109,8 @@ bool ModuleModelLoader::LoadSphere(const char* name, const math::float3& pos, co
         meshes.back().material = materials.size();
 
         Material mat;
-        mat.program		  = ModulePrograms::DEFAULT_PROGRAM;
-        mat.diffuse_color = color;
+        mat.program		 = ModulePrograms::DEFAULT_PROGRAM;
+        mat.object_color = color;
 
         materials.push_back(mat);
 
@@ -138,8 +147,8 @@ bool ModuleModelLoader::LoadCylinder(const char* name, const math::float3& pos, 
         meshes.back().material = materials.size();
 
         Material mat;
-        mat.program		  = ModulePrograms::DEFAULT_PROGRAM;
-        mat.diffuse_color = color;
+        mat.program		 = ModulePrograms::DEFAULT_PROGRAM;
+        mat.object_color = color;
 
         materials.push_back(mat);
 
@@ -163,8 +172,8 @@ bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, con
         meshes.back().material = materials.size();
 
         Material mat;
-        mat.program		  = ModulePrograms::DEFAULT_PROGRAM;
-        mat.diffuse_color = color;
+        mat.program		 = ModulePrograms::DEFAULT_PROGRAM;
+        mat.object_color = color;
 
         materials.push_back(mat);
 
@@ -215,8 +224,8 @@ bool ModuleModelLoader::LoadCube(const char* name, const math::float3& pos, cons
         meshes.back().material = materials.size();
 
         Material mat;
-        mat.program		  = ModulePrograms::DEFAULT_PROGRAM;
-        mat.diffuse_color = color;
+        mat.program		 = ModulePrograms::DEFAULT_PROGRAM;
+        mat.object_color = color;
 
         materials.push_back(mat);
 

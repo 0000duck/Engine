@@ -74,10 +74,12 @@ void PanelProperties::DrawMaterial(unsigned index)
             ImGui::Image((ImTextureID)material.diffuse_map, ImVec2(128.0f, 128.0f));
         }
 
-        ImGui::ColorEdit4("diffuse color", (float*)&material.diffuse_color);
+        ImGui::ColorEdit4("object color", (float*)&material.object_color);
 
         ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
-        ImGui::SliderFloat("gloss", &material.glossiness, 0.0f, 1.0f);
+        ImGui::SliderFloat("k ambient", &material.k_ambient, 0.0f, 1.0f);
+        ImGui::SliderFloat("k diffsue", &material.k_diffuse, 0.0f, 1.0f);
+        ImGui::SliderFloat("k specular", &material.k_specular, 0.0f, 1.0f);
     }
 }
 

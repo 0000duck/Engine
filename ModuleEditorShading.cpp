@@ -29,9 +29,11 @@ bool ModuleEditorShading::Init()
     viewport = new Viewport;
 
     ModuleModelLoader::Material material;
-    material.diffuse_color = math::float4(0.6f, 0.0f, 0.0f, 1.0f);
-    material.glossiness    = 1.0f;
-    material.shininess	   = 32.0f;
+    material.object_color = math::float4(0.6f, 0.0f, 0.0f, 1.0f);
+    material.k_specular   = 0.6f;
+    material.k_diffuse    = 0.3f;
+    material.k_ambient    = 1.0f;
+    material.shininess	  = 32.0f;
 
     LoadShapes(Shapes(shape), material);
     viewport->CenterCamera();
@@ -72,9 +74,11 @@ update_status ModuleEditorShading::Update()
                 }
             }
 
-            ImGui::ColorEdit4("diffuse color", (float*)&material.diffuse_color);
+            ImGui::ColorEdit4("object color", (float*)&material.object_color);
             ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
-            ImGui::SliderFloat("gloss", &material.glossiness, 0.0f, 1.0f);
+            ImGui::SliderFloat("K ambient", &material.k_ambient, 0.0f, 1.0f);
+            ImGui::SliderFloat("K diffuse", &material.k_diffuse, 0.0f, 1.0f);
+            ImGui::SliderFloat("K specular", &material.k_specular, 0.0f, 1.0f);
         }
 
         if(ImGui::CollapsingHeader("Light"))
@@ -88,17 +92,15 @@ update_status ModuleEditorShading::Update()
             ImGui::Checkbox("show axis", &show_axis);
             ImGui::Checkbox("show grid", &show_grid);
             ImGui::Checkbox("auto rotate", &auto_rotate);
-
-            char* show_components[ModuleModelLoader::SHOW_COMPONENT_COUNT] = { "All", "Ambient", "Diffuse", "Specular"  };
-            ImGui::Combo("show light component", (int*)&material.show_component, show_components, ModuleModelLoader::SHOW_COMPONENT_COUNT);
         }
 
         for(unsigned i=0; i< App->models->materials.size(); ++i)
         {
-            App->models->materials[i].diffuse_color = material.diffuse_color;
+            App->models->materials[i].object_color = material.object_color;
             App->models->materials[i].shininess = material.shininess;
-            App->models->materials[i].glossiness = material.glossiness;
-            App->models->materials[i].show_component = material.show_component;
+            App->models->materials[i].k_ambient = material.k_ambient;
+            App->models->materials[i].k_diffuse = material.k_diffuse;
+            App->models->materials[i].k_specular = material.k_specular;
         }
 
         ImGui::End();

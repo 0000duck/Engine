@@ -6,15 +6,17 @@
 #define SHOW_SPECULAR 3
 
 uniform sampler2D diffuse_map;
-uniform vec4 diffuse_color;
+uniform vec4 object_color;
 uniform int use_diffuse_map;
 uniform mat4 view;
 
 uniform vec3 light_pos;
 uniform float ambient;
 uniform float shininess;
-uniform float glossiness;
-uniform int show_type;
+
+uniform float k_ambient;
+uniform float k_diffuse;
+uniform float k_specular;
 
 in vec3 normal;
 in vec3 position;
@@ -29,7 +31,7 @@ void main()
     float diffuse    = max(0.0, dot(normal, light_dir));
     float specular   = 0.0;
 
-    if(diffuse > 0.0 && glossiness > 0.0 && shininess > 0.0)
+    if(diffuse > 0.0 && k_specular > 0.0 && shininess > 0.0)
     {
         vec3 view_pos    = transpose(mat3(view))*(-view[3].xyz);
         vec3 view_dir    = normalize(view_pos-position);
@@ -38,28 +40,11 @@ void main()
 
         if(sp > 0.0)
         {
-            specular = glossiness*pow(sp, shininess); 
+            specular = pow(sp, shininess); 
         }
     }
     
-    float intensity = 0.0;
-
-    if(show_type == SHOW_AMBIENT)
-    {
-        intensity = ambient;
-    }
-    else if(show_type == SHOW_DIFFUSE)
-    {
-        intensity = diffuse;
-    }
-    else if(show_type == SHOW_SPECULAR)
-    {
-        intensity = specular;
-    }
-    else
-    {
-        intensity = (ambient+diffuse+specular); 
-    }
+    float intensity = (k_ambient*ambient+k_diffuse*diffuse+k_specular*specular); 
 
     if(use_diffuse_map == 1)
     {
@@ -67,7 +52,7 @@ void main()
     }
     else
     {
-        color = diffuse_color;
+        color = object_color;
     }
 
     color = vec4(color.rgb*intensity, color.a);

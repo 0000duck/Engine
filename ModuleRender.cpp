@@ -110,13 +110,14 @@ void ModuleRender::RenderMesh(const ModuleModelLoader::Mesh& mesh, const ModuleM
     glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->models->light.pos);
     glUniform1f(glGetUniformLocation(program,  "ambient"), App->models->ambient);
     glUniform1f(glGetUniformLocation(program, "shininess"), material.shininess);
-    glUniform1f(glGetUniformLocation(program, "glossiness"), material.glossiness);
-    glUniform1i(glGetUniformLocation(program, "show_type"), (int)material.show_component);
+    glUniform1f(glGetUniformLocation(program, "k_ambient"), material.k_ambient);
+    glUniform1f(glGetUniformLocation(program, "k_diffuse"), material.k_diffuse);
+    glUniform1f(glGetUniformLocation(program, "k_specular"), material.k_specular);
 
     if (material.diffuse_map == 0)
     {
         glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
-        glUniform4fv(glGetUniformLocation(program, "diffuse_color"), 1, (const float*)&material.diffuse_color);
+        glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&material.object_color);
     }
     else
     {
