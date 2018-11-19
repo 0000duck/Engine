@@ -31,7 +31,7 @@ bool ModuleEditorShading::Init()
     ModuleModelLoader::Material material;
     material.object_color = math::float4(0.6f, 0.0f, 0.0f, 1.0f);
     material.k_specular   = 0.6f;
-    material.k_diffuse    = 0.3f;
+    material.k_diffuse    = 0.5f;
     material.k_ambient    = 1.0f;
     material.shininess	  = 32.0f;
 

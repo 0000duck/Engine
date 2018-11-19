@@ -34,29 +34,29 @@ bool ModuleModelLoader::Init()
 {
     // initial setup
 
-    LoadSphere("sphere0", math::float3(1.0f, 1.0f, 1.0f), math::Quat::identity, 1.0f, 20, 20, math::float4(0.3f, 0.3f, 0.3f, 1.0f));
+    LoadSphere("sphere0", math::float3(1.0f, 1.0f, 1.0f), math::Quat::identity, 1.0f, 20, 20, math::float4(0.5f, 0.0f, 0.5f, 1.0f));
 	materials.back().k_specular = 0.9f;
 	materials.back().shininess  = 64.0f;
     materials.back().k_specular = 0.6f;
     materials.back().k_diffuse  = 0.5f;
-    materials.back().k_ambient  = 0.7f;
+    materials.back().k_ambient  = 1.0f;
 
-    LoadCylinder("cylinder0", math::float3(3.0f, 1.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(0.0f, 0.2f, 0.2f, 1.0f));
+    LoadCylinder("cylinder0", math::float3(3.0f, 1.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(0.0f, 0.5f, 0.5f, 1.0f));
 	materials.back().k_specular = 0.9f;
 	materials.back().shininess  = 64.0f;
     materials.back().k_specular = 0.6f;
     materials.back().k_diffuse  = 0.5f;
-    materials.back().k_ambient  = 0.7f;
+    materials.back().k_ambient  = 1.0f;
 
-    LoadTorus("torus0", math::float3(0.0f, 1.0f, 3.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(0.2f, 0.2f, 0.0f, 1.0f));
+    LoadTorus("torus0", math::float3(0.0f, 1.0f, 3.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(0.5f, 0.5f, 0.0f, 1.0f));
 	materials.back().k_specular = 0.9f;
 	materials.back().shininess  = 16.0f;
     materials.back().k_specular = 0.6f;
     materials.back().k_diffuse  = 0.5f;
-    materials.back().k_ambient  = 0.7f;
+    materials.back().k_ambient  = 1.0f;
 
 	light.pos = math::float3(-2.0f, 0.0f, 6.0f);
-    ambient   = 1.0f;
+    ambient   = 0.3f;
 
     return true;
 }
