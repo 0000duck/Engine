@@ -6,7 +6,7 @@
 #include "sdl.h"
 
 #define ROTATION_SPEED 0.025f
-#define TRANSLATION_SPEED 0.03f
+#define TRANSLATION_SPEED 0.001f
 
 ArcBall::ArcBall() 
 {
@@ -28,8 +28,8 @@ void ArcBall::Update(Camera* camera)
 
         if(ImGui::GetIO().KeyCtrl) // note: must be inside imgui window
         {
-            dragging.panning.x= -TRANSLATION_SPEED*delta.x;
-            dragging.panning.y= TRANSLATION_SPEED*delta.y;
+            dragging.panning.x= -TRANSLATION_SPEED*params.radius*delta.x;
+            dragging.panning.y= TRANSLATION_SPEED*params.radius*delta.y;
         }
         else
         {
@@ -39,9 +39,13 @@ void ArcBall::Update(Camera* camera)
     }
     else
     {
+        math::Quat rotation_polar(math::float3(0.0f, 1.0f, 0.0f), dragging.polar+params.polar);
+        math::Quat rotation_azimuthal(math::float3(1.0f, 0.0f, 0.0f), dragging.azimuthal+params.azimuthal);
+        math::Quat rotation = rotation_polar*rotation_azimuthal;
+
         params.polar += dragging.polar;
         params.azimuthal += dragging.azimuthal;
-        params.panning += dragging.panning;
+        params.panning += rotation.Transform(dragging.panning);
         dragging.polar = 0.0f;
         dragging.azimuthal = 0.0f;
         dragging.panning = math::float3(0.0f);
@@ -50,8 +54,7 @@ void ArcBall::Update(Camera* camera)
     if(ImGui::IsMouseDragging(1))
     {
         ImVec2 delta = ImGui::GetMouseDragDelta(1);
-        float sign = delta.y < 0.0f ? -1.0f : 1.0f;
-        dragging.radius = sign*(TRANSLATION_SPEED*delta.y)*(TRANSLATION_SPEED*delta.y);
+        dragging.radius = TRANSLATION_SPEED*params.radius*delta.y;
         if (dragging.radius < -params.radius)
         {
             dragging.radius = -params.radius;
@@ -76,7 +79,7 @@ void ArcBall::UpdateCamera(Camera* camera)
     math::Quat rotation_polar(math::float3(0.0f, 1.0f, 0.0f), dragging.polar+params.polar);
     math::Quat rotation_azimuthal(math::float3(1.0f, 0.0f, 0.0f), dragging.azimuthal+params.azimuthal);
     math::Quat rotation = rotation_polar*rotation_azimuthal;
-	camera->SetPosition(rotation.Transform(math::float3(0.0f, 0.0f, dragging.radius + params.radius)) + dragging.panning + params.panning );
+	camera->SetPosition(rotation.Transform(math::float3(0.0f, 0.0f, dragging.radius + params.radius)+ dragging.panning) + params.panning );
 	camera->SetRotation(rotation);
 }
 
