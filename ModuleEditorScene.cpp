@@ -20,7 +20,7 @@ bool ModuleEditorScene::Init()
 {
     bool ok = ModuleEditor::Init();
 
-    //App->models->Load("BakerHouse.fbx");
+    App->models->Load("BakerHouse.fbx");
 
     if(ok)
     {
@@ -36,10 +36,10 @@ update_status ModuleEditorScene::Update()
 {
     InitFrame();
 
-    DrawDebugData();
+    //DrawDebugData();
     viewport->Draw();
-    go_tree->Draw();
-    properties->Draw(go_tree->selected);
+    //go_tree->Draw();
+    //properties->Draw(go_tree->selected);
 
     EndFrame();
 

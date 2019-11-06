@@ -66,7 +66,7 @@ void PanelProperties::DrawMaterial(unsigned index)
 	if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ModuleModelLoader::Material& material = App->models->materials[index];
-        char* program_names[ModulePrograms::PROGRAM_COUNT] = { "Default", "Gouraud", "Phong", "Blinn" };
+        char* program_names[ModulePrograms::PROGRAM_COUNT] = { "Default", "Flat", "Gouraud", "Phong", "Blinn" };
         ImGui::Combo("shader", (int*)&material.program, program_names, ModulePrograms::PROGRAM_COUNT);
 
         if(material.diffuse_map)

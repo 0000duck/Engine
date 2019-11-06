@@ -30,7 +30,7 @@ Application::Application(int argc, char** argv)
     {
         modules.push_back(editor = new ModuleEditorShading());
     }
-    else
+    else 
     {
         modules.push_back(editor = new ModuleEditorScene());
     }

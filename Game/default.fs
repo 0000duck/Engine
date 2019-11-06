@@ -44,7 +44,7 @@ void main()
         }
     }
     
-    float intensity = (k_ambient*ambient+k_diffuse*diffuse+k_specular*specular); 
+    float intensity = 1.0; //(k_ambient*ambient+k_diffuse*diffuse+k_specular*specular); 
 
     if(use_diffuse_map == 1)
     {

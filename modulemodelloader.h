@@ -61,7 +61,7 @@ public:
         math::float4 object_color    = math::float4::zero;
         float shininess              = 0.0f;
         float k_specular             = 0.0f;
-        float k_diffuse              = 0.0f;
+        float k_diffuse              = 1.0f;
         float k_ambient              = 0.0f;
     };
 
