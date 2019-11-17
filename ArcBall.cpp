@@ -6,7 +6,7 @@
 #include "sdl.h"
 
 #define ROTATION_SPEED 0.025f
-#define TRANSLATION_SPEED 0.001f
+#define TRANSLATION_SPEED 0.003f
 
 ArcBall::ArcBall() 
 {
@@ -62,7 +62,6 @@ void ArcBall::Update(Camera* camera)
     }
     else
     {
-        params.radius += dragging.radius;
         dragging.radius = 0.0f;
     }
 
