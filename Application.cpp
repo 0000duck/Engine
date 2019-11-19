@@ -12,6 +12,8 @@
 
 #include "ModuleDebugDraw.h"
 
+#include "ModulePhysics.h"
+
 
 using namespace std;
 
@@ -29,6 +31,10 @@ Application::Application(int argc, char** argv)
     if(argc > 1 && _stricmp(argv[1], "shading") == 0)
     {
         modules.push_back(editor = new ModuleEditorShading());
+    }
+    else if(argc > 1 && _stricmp(argv[1], "physics") == 0)
+    {
+        modules.push_back(editor = new ModulePhysics());
     }
     else 
     {

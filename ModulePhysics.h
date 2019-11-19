@@ -1,7 +1,7 @@
 #ifndef _MODULE_PHYSICS_H_
 #define _MODULE_PHYSICS_H_
 
-#include "Module.h"
+#include "ModuleEditor.h"
 
 #include<vector>
 
@@ -11,8 +11,9 @@ class btCollisionDispatcher;
 class btBroadphaseInterface;
 class btSequentialImpulseConstraintSolver;
 class btDiscreteDynamicsWorld;
+class Viewport;
 
-class ModulePhysics : public Module
+class ModulePhysics : public ModuleEditor
 {
 public:
 
@@ -26,11 +27,12 @@ public:
 private:
     std::vector<btCollisionShape*> collisionShapes;
 
-	btDefaultCollisionConfiguration* collisionConfiguration = nullptr;
-	btCollisionDispatcher* dispatcher                       = nullptr;
-	btBroadphaseInterface* overlappingPairCache             = nullptr;
-	btSequentialImpulseConstraintSolver* solver             = nullptr;
-	btDiscreteDynamicsWorld* dynamicsWorld                  = nullptr;
+	btDefaultCollisionConfiguration*     collisionConfiguration = nullptr;
+	btCollisionDispatcher*               dispatcher             = nullptr;
+	btBroadphaseInterface*               overlappingPairCache   = nullptr;
+	btSequentialImpulseConstraintSolver* solver                 = nullptr;
+	btDiscreteDynamicsWorld*             dynamicsWorld          = nullptr;
+    Viewport*                            viewport               = nullptr;
 
 };
 

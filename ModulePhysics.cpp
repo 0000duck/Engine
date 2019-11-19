@@ -1,8 +1,24 @@
 #include "Globals.h"
 
 #include "ModulePhysics.h"
+#include "Application.h"
+#include "modulemodelloader.h"
+
+#include "Viewport.h"
 
 #include "btBulletDynamicsCommon.h"
+
+#ifdef _DEBUG
+#pragma comment( lib, "Bullet3Collision_vs2010_debug.lib" )
+#pragma comment( lib, "LinearMath_vs2010_debug.lib" )
+#pragma comment( lib, "BulletCollision_vs2010_debug.lib" )
+#pragma comment( lib, "BulletDynamics_vs2010_debug.lib" )
+#else
+#pragma comment( lib, "Bullet3Collision_vs2010.lib" )
+#pragma comment( lib, "LinearMath_vs2010.lib" )
+#pragma comment( lib, "BulletCollision_vs2010.lib" )
+#pragma comment( lib, "BulletDynamics_vs2010.lib" )
+#endif
 
 ModulePhysics::ModulePhysics()
 {
@@ -14,88 +30,98 @@ ModulePhysics::~ModulePhysics()
 
 bool ModulePhysics::Init()
 {
-	///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
-	collisionConfiguration = new btDefaultCollisionConfiguration();
+    bool ok = ModuleEditor::Init();
 
-	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+    if(ok)
+    {
+		ModuleModelLoader* models = App->models;
+		models->Clear();
 
-	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-	overlappingPairCache = new btDbvtBroadphase();
+        viewport = new Viewport;
 
-	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-	solver = new btSequentialImpulseConstraintSolver;
+        ///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
+        collisionConfiguration = new btDefaultCollisionConfiguration();
 
-	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+        ///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
+        dispatcher = new btCollisionDispatcher(collisionConfiguration);
 
-	dynamicsWorld->setGravity(btVector3(0, -10, 0));
+        ///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
+        overlappingPairCache = new btDbvtBroadphase();
 
-	///-----initialization_end-----
+        ///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
+        solver = new btSequentialImpulseConstraintSolver;
 
-	///create a few basic rigid bodies
+        dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-	//the ground is a cube of side 100 at position y = -56.
-	//the sphere will hit it at y = -6, with center at -5
-	{
-		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+        dynamicsWorld->setGravity(btVector3(0, -10, 0));
 
-		collisionShapes.push_back(groundShape);
+        ///-----initialization_end-----
 
-		btTransform groundTransform;
-		groundTransform.setIdentity();
-		groundTransform.setOrigin(btVector3(0, -56, 0));
+        ///create a few basic rigid bodies
 
-		btScalar mass(0.);
-
-		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
-
-		btVector3 localInertia(0, 0, 0);
-		if (isDynamic)
+        //the ground is a cube of side 100 at position y = -56.
+        //the sphere will hit it at y = -6, with center at -5
         {
-			groundShape->calculateLocalInertia(mass, localInertia);
+            btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+
+            collisionShapes.push_back(groundShape);
+
+            btTransform groundTransform;
+            groundTransform.setIdentity();
+            groundTransform.setOrigin(btVector3(0, -56, 0));
+
+            btScalar mass(0.);
+
+            //rigidbody is dynamic if and only if mass is non zero, otherwise static
+            bool isDynamic = (mass != 0.f);
+
+            btVector3 localInertia(0, 0, 0);
+            if (isDynamic)
+            {
+                groundShape->calculateLocalInertia(mass, localInertia);
+            }
+
+            //using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
+            btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
+            btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
+            btRigidBody* body = new btRigidBody(rbInfo);
+
+            //add the body to the dynamics world
+            dynamicsWorld->addRigidBody(body);
         }
 
-		//using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
-		btRigidBody* body = new btRigidBody(rbInfo);
+        {
+            //create a dynamic rigidbody
 
-		//add the body to the dynamics world
-		dynamicsWorld->addRigidBody(body);
-	}
+            //btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+            btCollisionShape* colShape = new btSphereShape(btScalar(1.));
+            collisionShapes.push_back(colShape);
 
-	{
-		//create a dynamic rigidbody
+            /// Create Dynamic Objects
+            btTransform startTransform;
+            startTransform.setIdentity();
 
-		//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-		btCollisionShape* colShape = new btSphereShape(btScalar(1.));
-		collisionShapes.push_back(colShape);
+            btScalar mass(1.f);
 
-		/// Create Dynamic Objects
-		btTransform startTransform;
-		startTransform.setIdentity();
+            //rigidbody is dynamic if and only if mass is non zero, otherwise static
+            bool isDynamic = (mass != 0.f);
 
-		btScalar mass(1.f);
+            btVector3 localInertia(0, 0, 0);
+            if (isDynamic)
+                colShape->calculateLocalInertia(mass, localInertia);
 
-		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+            startTransform.setOrigin(btVector3(2, 10, 0));
 
-		btVector3 localInertia(0, 0, 0);
-		if (isDynamic)
-			colShape->calculateLocalInertia(mass, localInertia);
+            //using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+            btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+            btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+            btRigidBody* body = new btRigidBody(rbInfo);
 
-		startTransform.setOrigin(btVector3(2, 10, 0));
+            dynamicsWorld->addRigidBody(body);
+        }
+    }
 
-		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-		btRigidBody* body = new btRigidBody(rbInfo);
-
-		dynamicsWorld->addRigidBody(body);
-	}
-
-    return true;
+    return ok;
 }
 
 update_status ModulePhysics::Update()
@@ -117,6 +143,12 @@ update_status ModulePhysics::Update()
             trans = obj->getWorldTransform();
         }
     }
+
+    InitFrame();
+    DrawDebugData();
+    viewport->Draw();
+    EndFrame();
+
 
     return UPDATE_CONTINUE;
 }
@@ -161,7 +193,7 @@ bool ModulePhysics::CleanUp()
 	//next line is optional: it will be cleared by the destructor when the array goes out of scope
 	collisionShapes.clear();
 
-    return true;
+    return ModuleEditor::CleanUp();
 }
 
 
