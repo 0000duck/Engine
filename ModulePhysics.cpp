@@ -9,12 +9,12 @@
 #include "btBulletDynamicsCommon.h"
 
 #ifdef _DEBUG
-#pragma comment( lib, "Bullet3Collision_vs2010_debug.lib" )
+#pragma comment( lib, "BulletCollision_vs2010_debug.lib" )
 #pragma comment( lib, "LinearMath_vs2010_debug.lib" )
 #pragma comment( lib, "BulletCollision_vs2010_debug.lib" )
 #pragma comment( lib, "BulletDynamics_vs2010_debug.lib" )
 #else
-#pragma comment( lib, "Bullet3Collision_vs2010.lib" )
+#pragma comment( lib, "BulletCollision_vs2010.lib" )
 #pragma comment( lib, "LinearMath_vs2010.lib" )
 #pragma comment( lib, "BulletCollision_vs2010.lib" )
 #pragma comment( lib, "BulletDynamics_vs2010.lib" )
@@ -56,7 +56,6 @@ bool ModulePhysics::Init()
         dynamicsWorld->setGravity(btVector3(0, -10, 0));
 
         ///-----initialization_end-----
-
         ///create a few basic rigid bodies
 
         //the ground is a cube of side 100 at position y = -56.
@@ -88,6 +87,9 @@ bool ModulePhysics::Init()
 
             //add the body to the dynamics world
             dynamicsWorld->addRigidBody(body);
+
+            models->LoadCube("cube0", math::float3(0.0f, -56.0f, 0.0f), math::Quat::identity, 50.0f, float4(1.0f, 1.0f, 1.0f, 1.0f));
+
         }
 
         {
@@ -118,6 +120,8 @@ bool ModulePhysics::Init()
             btRigidBody* body = new btRigidBody(rbInfo);
 
             dynamicsWorld->addRigidBody(body);
+
+            models->LoadSphere("sphere0", math::float3(2.0f, 10.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
         }
     }
 
@@ -126,6 +130,7 @@ bool ModulePhysics::Init()
 
 update_status ModulePhysics::Update()
 {
+    // \todo: elapsed ?
     dynamicsWorld->stepSimulation(1.f / 60.f, 10);
 
     //print positions of all objects

@@ -50,6 +50,7 @@ update_status ModuleEditorShading::Update()
     InitFrame();
 
     DrawDebugData();
+	dd::sphere(App->models->light.pos, math::float3(1.0f, 1.0f, 1.0f), 0.05f);
 
     viewport->Draw();
 

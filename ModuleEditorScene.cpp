@@ -8,6 +8,8 @@
 #include "PanelGOTree.h"
 #include "PanelProperties.h"
 
+#include "DebugDraw.h"
+
 ModuleEditorScene::ModuleEditorScene()
 {
 }
@@ -36,7 +38,8 @@ update_status ModuleEditorScene::Update()
 {
     InitFrame();
 
-    //DrawDebugData();
+    DrawDebugData();
+	dd::sphere(App->models->light.pos, math::float3(1.0f, 1.0f, 1.0f), 0.05f);
     viewport->Draw();
     //go_tree->Draw();
     //properties->Draw(go_tree->selected);

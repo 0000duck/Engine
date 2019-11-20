@@ -59,7 +59,6 @@ void ModuleEditor::DrawDebugData()
         dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);
     }
 
-	dd::sphere(App->models->light.pos, math::float3(1.0f, 1.0f, 1.0f), 0.05f);
 }
 
 void ModuleEditor::EndFrame()
